@@ -5,13 +5,13 @@ package tsp;
 public class TwoOpt implements TSPSolver{
 
 	@Override
-	public short[] solveTSP(Node[] nodes, Interval coordInterval) {
+	public short[] solveTSP(final Node[] nodes, final Interval coordInterval) {
 		//Call solveTSP with a mockup visualizer
 		return solveTSP(nodes, coordInterval, Visualizer.getMockup());
 	}
 
 	@Override
-	public short[] solveTSP(Node[] nodes, Interval coordInterval, Visualizer visualizer) {
+	public short[] solveTSP(final Node[] nodes, final Interval coordInterval, final Visualizer visualizer) {
 		short[] path = new short[nodes.length];
 		for(short i = 0; i < nodes.length; i++){
 			path[i] = i;
@@ -42,7 +42,7 @@ public class TwoOpt implements TSPSolver{
 		return path;
 	}
 	
-	private boolean maybeSwap(Node[] nodes, short[] path, int i, int k){
+	private boolean maybeSwap(final Node[] nodes, final short[] path, final int i, final int k){
 		Node beforeSwap = nodes[path[i-1]];
 		Node firstSwap = nodes[path[i]];
 		Node lastSwap = nodes[path[k]];
@@ -56,14 +56,14 @@ public class TwoOpt implements TSPSolver{
 		return false;
 	}
 	
-	private void reverseSubpath(short[] path, int start, int end){
+	private void reverseSubpath(final short[] path, final int start, final int end){
 		int length = end - start + 1;
 		for(int i = 0; i < length/2; i++){
 			swapTwoElements(path, start + i, end - i);
 		}
 	}
 	
-	private void swapTwoElements(short[] array, int index1, int index2){
+	private void swapTwoElements(final short[] array, final int index1, final int index2){
 		short tmp = array[index1];
 		array[index1] = array[index2];
 		array[index2] = tmp;
