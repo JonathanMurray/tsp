@@ -1,5 +1,7 @@
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.Arrays;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -13,7 +15,7 @@ public class GraphVisualizer extends JFrame{
 	
 	public static void main(String[] args) {
 		Random r = new Random();
-		short numNodes = 40;
+		short numNodes = 8;
 		Interval coordInterval = new Interval(0, 1000);
 		Node[] nodes = new Node[numNodes];
 		short[] path = new short[numNodes];
@@ -24,8 +26,32 @@ public class GraphVisualizer extends JFrame{
 			path[i] = i;
 		}
 		Dimension dimension = new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
-		new GraphVisualizer(dimension, coordInterval, nodes, path);
-		sleep(1000);
+		GraphVisualizer visualization = new GraphVisualizer(dimension, coordInterval, nodes, path);
+
+		boolean didASwap = false;
+		int sleepTime = 200;
+		System.out.println(Arrays.toString(path));
+		while(true){
+			loop:
+			for(int i = 1; i < path.length; i++){
+				for(int k = i+1; k < path.length; k++){
+					visualization.highlight(i, k);
+					visualization.repaint();
+					sleep(sleepTime);
+					visualization.unhighlight();
+					didASwap = TwoOpt.maybeSwap(nodes, path, i, k);
+					visualization.repaint();
+					sleep(sleepTime);
+					if(didASwap){
+						System.out.println(Arrays.toString(path));
+						break loop;
+					}
+				}
+			}
+			if(!didASwap){
+				break;
+			}
+		}
 	}
 	
 	private static void sleep(int time){
@@ -40,6 +66,7 @@ public class GraphVisualizer extends JFrame{
 	private short[] path;
 	private Interval coordInterval;
 	private final int invisBorderWidth = 40;
+	private Interval highlighted;
 	
 	public GraphVisualizer(Dimension dimension, Interval coordInterval, Node[] nodes, short[] path){
 		super("Visualizer");
@@ -52,31 +79,57 @@ public class GraphVisualizer extends JFrame{
         setLocationRelativeTo(null); //makes it centered on screen
 	}
 
+	public void highlight(int firstNode, int lastNode){
+		highlighted = new Interval(firstNode, lastNode);
+	}
+	
+	public void unhighlight(){
+		highlighted = null;
+	}
 	
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		paintNodes(g);
 		paintPath(g);
-	}
-	
-	private void paintNodes(Graphics g){
-		for(Node node : nodes){
-			int x = coordToScreen(node.x());
-			int y = coordToScreen(node.y());
-			g.fillRect(x-2, y-2, 4, 4);
+		if(highlighted != null){
+			Color c = g.getColor();
+			g.setColor(Color.GREEN);
+			paintSubPath(g, highlighted.min(), highlighted.max(), false);
+			g.setColor(c);
 		}
 	}
 	
+	private void paintNodes(Graphics g){
+		
+		for(int i = 0; i < nodes.length; i++){
+			Node node = nodes[i];
+			int x = coordToScreen(node.x());
+			int y = coordToScreen(node.y());
+			paintNode(g, x, y, i);
+		}
+	}
+	
+	private void paintNode(Graphics g, int screenX, int screenY, int nodeIndex){
+		g.fillRect(screenX-2, screenY-2, 4, 4);
+		g.drawString("" + nodeIndex, screenX-3, screenY-5);
+	}
+	
 	private void paintPath(Graphics g){
-		int fromIndex = path[0];
+		paintSubPath(g, 0, path.length - 1, true);
+	}
+	
+	private void paintSubPath(Graphics g, int firstNode, int lastNode, boolean loop){
+		int fromIndex = path[firstNode];
 		int toIndex;
-		for(int i = 1; i < path.length; i++){
+		for(int i = firstNode + 1; i <= lastNode; i++){
 			toIndex = path[i];
 			paintEdge(g, nodes[fromIndex], nodes[toIndex]);
 			fromIndex = path[i];
 		}
-		paintEdge(g, nodes[nodes.length-1], nodes[0]);
+		if(loop){
+			paintEdge(g, nodes[path[lastNode]], nodes[path[firstNode]]);
+		}
 	}
 	
 	private void paintEdge(Graphics g, Node from, Node to){

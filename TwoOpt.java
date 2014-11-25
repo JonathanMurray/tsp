@@ -19,11 +19,11 @@ public class TwoOpt {
 		System.out.println("path after swap: " + Arrays.toString(path));
 	}
 	
-	public static boolean maybeSwap(Node[] nodes, short[] path, short i, short k){
+	public static boolean maybeSwap(Node[] nodes, short[] path, int i, int k){
 		Node beforeSwap = nodes[path[i-1]];
 		Node firstSwap = nodes[path[i]];
 		Node lastSwap = nodes[path[k]];
-		Node afterSwap = nodes[path[k+1]];
+		Node afterSwap = nodes[path[(k+1) % path.length]];
 		double sqDistance = beforeSwap.sqDistance(firstSwap) + afterSwap.sqDistance(lastSwap);
 		double newSqDistance = beforeSwap.sqDistance(lastSwap) + afterSwap.sqDistance(firstSwap);
 		if(newSqDistance < sqDistance){
