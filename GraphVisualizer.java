@@ -16,7 +16,7 @@ public class GraphVisualizer extends JFrame{
 	
 	public static void main(String[] args) {
 		Random r = new Random();
-		short numNodes = 8;
+		short numNodes = 150;
 		Interval coordInterval = new Interval(0, 1000);
 		Node[] nodes = new Node[numNodes];
 		short[] path = new short[numNodes];
@@ -30,7 +30,7 @@ public class GraphVisualizer extends JFrame{
 		GraphVisualizer visualization = new GraphVisualizer(dimension, coordInterval, nodes, path);
 
 		boolean didASwap = false;
-		int sleepTime = 200;
+		int sleepTime = 20;
 		System.out.println(Arrays.toString(path));
 		while(true){
 			loop:
@@ -38,13 +38,11 @@ public class GraphVisualizer extends JFrame{
 				for(int k = i+1; k < path.length; k++){
 					visualization.highlight(i, k);
 					visualization.repaint();
-					sleep(sleepTime);
-					visualization.unhighlight();
 					didASwap = TwoOpt.maybeSwap(nodes, path, i, k);
 					visualization.repaint();
-					sleep(sleepTime);
 					if(didASwap){
 						System.out.println(Arrays.toString(path));
+						sleep(sleepTime);
 						break loop;
 					}
 				}
