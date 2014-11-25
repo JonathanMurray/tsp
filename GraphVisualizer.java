@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.util.Arrays;
 import java.util.Random;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 
@@ -77,6 +78,11 @@ public class GraphVisualizer extends JFrame{
         setSize(dimension);
         setVisible(true);
         setLocationRelativeTo(null); //makes it centered on screen
+        add(new JComponent() {
+        	protected void paintComponent(Graphics g) {
+        		paintEverything(g);
+        	}
+		});
 	}
 
 	public void highlight(int firstNode, int lastNode){
@@ -86,10 +92,8 @@ public class GraphVisualizer extends JFrame{
 	public void unhighlight(){
 		highlighted = null;
 	}
-	
-	@Override
-	public void paint(Graphics g) {
-		super.paint(g);
+
+	private void paintEverything(Graphics g){
 		paintNodes(g);
 		paintPath(g);
 		if(highlighted != null){
