@@ -1,5 +1,4 @@
-import java.util.Arrays;
-import java.util.Random;
+package tsp;
 
 
 
@@ -8,23 +7,19 @@ public class TwoOpt implements TSPSolver{
 	@Override
 	public short[] solveTSP(Node[] nodes, Interval coordInterval) {
 		//Call solveTSP with a mockup visualizer
-		return solveTSP(nodes, coordInterval, new Visualizer() {});
+		return solveTSP(nodes, coordInterval, Visualizer.getMockup());
 	}
 
 	@Override
 	public short[] solveTSP(Node[] nodes, Interval coordInterval, Visualizer visualizer) {
-		Random r = new Random();
 		short[] path = new short[nodes.length];
-		visualizer.setPath(path);
 		for(short i = 0; i < nodes.length; i++){
-			int x = r.nextInt(coordInterval.max() + 1);
-			int y = r.nextInt(coordInterval.max() + 1);
-			nodes[i] = new Node(x, y); 
 			path[i] = i;
 		}
+		visualizer.setPath(path);
 		
 		boolean didASwap = false;
-		System.out.println(Arrays.toString(path));
+//		System.out.println(Arrays.toString(path));
 		while(true){
 			loop:
 			for(int i = 1; i < path.length; i++){
@@ -34,7 +29,6 @@ public class TwoOpt implements TSPSolver{
 					didASwap = maybeSwap(nodes, path, i, k);
 					visualizer.repaint();
 					if(didASwap){
-						System.out.println(Arrays.toString(path));
 						visualizer.sleep();
 						break loop;
 					}

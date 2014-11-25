@@ -1,3 +1,5 @@
+package tsp;
+
 /**
  * This class is used from within algorithms, to visualize the running of the algorithm.
  * setPath must be called as soon as the first has been generated. Then the reference is kept by
@@ -9,9 +11,19 @@
  */
 public interface Visualizer {
 	//Empty default methods to get a "mockup" for free
-	default void repaint(){}
-	default void sleep(){}
-	default void highlight(int from, int to){}
-	default void dehighlight(){}
-	default void setPath(short[] path){}
+	void repaint();
+	void sleep();
+	void highlight(int from, int to);
+	void dehighlight();
+	void setPath(short[] path);
+	
+	public static Visualizer getMockup(){
+		return new Visualizer(){
+			public void repaint() {}
+			public void sleep() {	}
+			public void highlight(int from, int to) {}
+			public void dehighlight() {	}
+			public void setPath(short[] path) {}
+		};
+	}
 }

@@ -1,3 +1,4 @@
+package tsp;
 
 public interface TSPSolver {
 	/**

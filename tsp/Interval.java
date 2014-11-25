@@ -1,3 +1,4 @@
+package tsp;
 
 public class Interval {
 	private int min;

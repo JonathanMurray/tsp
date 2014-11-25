@@ -1,3 +1,4 @@
+package tsp;
 
 public class Node {
 	private int x;

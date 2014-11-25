@@ -1,3 +1,4 @@
+package tsp;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -8,18 +9,28 @@ import javax.swing.JFrame;
 
 @SuppressWarnings("serial")
 public class VisualizerImpl extends JFrame implements Visualizer{
+	
+	private long lastRepaint = 0;
+	private final int waitMsForRepaint;
 
-	private Node[] nodes;
+	private final Node[] nodes;
 	private short[] path;
-	private Interval coordInterval;
+	private final Interval coordInterval;
 	private final int invisBorderWidth = 40;
 	private Interval highlighted;
+	private final int sleepMs;
 	
-	public VisualizerImpl(Dimension dimension, Interval coordInterval, Node[] nodes){
+	public VisualizerImpl(Dimension dimension, TSPInput tspInput){
+		this(dimension, tspInput, new VisualizationParams(0, 10));
+	}
+	
+	public VisualizerImpl(Dimension dimension, TSPInput tspInput, VisualizationParams visualizationParams){
 		super("Visualizer");
-		this.nodes = nodes;
+		this.nodes = tspInput.nodes;
 		this.path = new short[]{};
-		this.coordInterval = coordInterval;
+		this.coordInterval = tspInput.coordInterval;
+		this.waitMsForRepaint = visualizationParams.waitMsForRepaint;
+		this.sleepMs = visualizationParams.sleepMs;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(dimension);
         setVisible(true);
@@ -33,7 +44,7 @@ public class VisualizerImpl extends JFrame implements Visualizer{
 	
 	public void sleep(){
 		try {
-			Thread.sleep(10);
+			Thread.sleep(sleepMs);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -59,6 +70,18 @@ public class VisualizerImpl extends JFrame implements Visualizer{
 			g.setColor(Color.GREEN);
 			paintSubPath(g, highlighted.min(), highlighted.max(), false);
 			g.setColor(c);
+		}
+	}
+	
+	@Override
+	public void repaint() {
+		if(waitMsForRepaint == 0){
+			super.repaint();
+		}else{
+			if(System.currentTimeMillis() - lastRepaint > waitMsForRepaint){
+				super.repaint();
+				lastRepaint = System.currentTimeMillis();
+			}
 		}
 	}
 	
@@ -105,5 +128,25 @@ public class VisualizerImpl extends JFrame implements Visualizer{
 	private int coordToScreen(int coordinate){
 		return (int)(invisBorderWidth + (coordinate - coordInterval.min())/(float)coordInterval.length() * (Math.min(getWidth(), getHeight()) - 2*invisBorderWidth));
 	}
+	
+	public static class TSPInput{
+		Interval coordInterval;
+		Node[] nodes;
+		public TSPInput(Interval coordInterval, Node[] nodes){
+			this.coordInterval = coordInterval;
+			this.nodes = nodes;
+		}
+	}
+	
+	public static class VisualizationParams{
+		int waitMsForRepaint;
+		int sleepMs;
+		public VisualizationParams(int waitMsForRepaint, int sleepMs){
+			this.waitMsForRepaint = waitMsForRepaint;
+			this.sleepMs = sleepMs;
+		}
+	}
+	
+	
 
 }

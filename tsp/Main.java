@@ -1,10 +1,13 @@
+package tsp;
 import java.awt.Dimension;
 import java.util.Random;
 
+import static tsp.VisualizerImpl.TSPInput;
+import static tsp.VisualizerImpl.VisualizationParams;
 
 public class Main {
 	
-	private static final short NUM_NODES = 150;
+	private static final short NUM_NODES = 550;
 	private static final int MIN_COORD = 0;
 	private static final int MAX_COORD = 1000;
 	private static final Dimension WINDOW_SIZE = new Dimension(600,600);
@@ -18,8 +21,11 @@ public class Main {
 			int y = coordInterval.min() + r.nextInt(coordInterval.length());
 			nodes[i] = new Node(x, y); 
 		}
-		VisualizerImpl visualizer = new VisualizerImpl(WINDOW_SIZE, coordInterval, nodes);
+		TSPInput tspInput = new TSPInput(coordInterval, nodes);
+		VisualizationParams params = new VisualizationParams(1000, 0);
+		VisualizerImpl visualizer = new VisualizerImpl(WINDOW_SIZE, tspInput, params);
 		new TwoOpt().solveTSP(nodes, coordInterval, visualizer);
+		System.out.println("done");
 	}
 	
 	
