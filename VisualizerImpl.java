@@ -1,76 +1,24 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.Arrays;
-import java.util.Random;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 
 @SuppressWarnings("serial")
-public class GraphVisualizer extends JFrame{
-	
-	public static final int WINDOW_WIDTH = 600;
-	public static final int WINDOW_HEIGHT = 600;
-	
-	public static void main(String[] args) {
-		Random r = new Random();
-		short numNodes = 150;
-		Interval coordInterval = new Interval(0, 1000);
-		Node[] nodes = new Node[numNodes];
-		short[] path = new short[numNodes];
-		for(short i = 0; i < numNodes; i++){
-			int x = r.nextInt(coordInterval.max() + 1);
-			int y = r.nextInt(coordInterval.max() + 1);
-			nodes[i] = new Node(x, y); 
-			path[i] = i;
-		}
-		Dimension dimension = new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
-		GraphVisualizer visualization = new GraphVisualizer(dimension, coordInterval, nodes, path);
+public class VisualizerImpl extends JFrame implements Visualizer{
 
-		boolean didASwap = false;
-		int sleepTime = 20;
-		System.out.println(Arrays.toString(path));
-		while(true){
-			loop:
-			for(int i = 1; i < path.length; i++){
-				for(int k = i+1; k < path.length; k++){
-					visualization.highlight(i, k);
-					visualization.repaint();
-					didASwap = TwoOpt.maybeSwap(nodes, path, i, k);
-					visualization.repaint();
-					if(didASwap){
-						System.out.println(Arrays.toString(path));
-						sleep(sleepTime);
-						break loop;
-					}
-				}
-			}
-			if(!didASwap){
-				break;
-			}
-		}
-	}
-	
-	private static void sleep(int time){
-		try {
-			Thread.sleep(time);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	private Node[] nodes;
 	private short[] path;
 	private Interval coordInterval;
 	private final int invisBorderWidth = 40;
 	private Interval highlighted;
 	
-	public GraphVisualizer(Dimension dimension, Interval coordInterval, Node[] nodes, short[] path){
+	public VisualizerImpl(Dimension dimension, Interval coordInterval, Node[] nodes){
 		super("Visualizer");
 		this.nodes = nodes;
-		this.path = path;
+		this.path = new short[]{};
 		this.coordInterval = coordInterval;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(dimension);
@@ -82,13 +30,25 @@ public class GraphVisualizer extends JFrame{
         	}
 		});
 	}
+	
+	public void sleep(){
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void highlight(int firstNode, int lastNode){
 		highlighted = new Interval(firstNode, lastNode);
 	}
 	
-	public void unhighlight(){
+	public void dehighlight(){
 		highlighted = null;
+	}
+	
+	public void setPath(short[] path){
+		this.path = path;
 	}
 
 	private void paintEverything(Graphics g){
