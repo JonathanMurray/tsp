@@ -1,19 +1,20 @@
 package tsp;
 
+
 public class Node {
-	private int x;
-	private int y;
+	private double x;
+	private double y;
 	
-	public Node(int x, int y){
+	public Node(double x, double y){
 		this.x = x;
 		this.y = y;
 	}
 	
-	public int x(){
+	public double x(){
 		return x;
 	}
 	
-	public int y(){
+	public double y(){
 		return y;
 	}
 	
@@ -22,6 +23,15 @@ public class Node {
 	}
 	
 	public String toString(){
-		return "(" + x + "," + y + ")";
+		return "( " + doubleStr(x) + " ; " + doubleStr(y) + " )";
+//		return "(" + x + "," + y + ")";
+	}
+	
+	private String doubleStr(double x){
+		String s = String.format("%.1f", x);
+		if(s.charAt(s.length() - 1) == '0'){
+			s = s.substring(0, s.length() - 2);
+		}
+		return s;
 	}
 }
