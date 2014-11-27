@@ -19,9 +19,7 @@ public class Main {
 	
 	private static void kattis(){
 		Node[] nodes = Reader.getInput().toArray(new Node[]{});
-		Interval coordInterval = new Interval(- 1000*1000, 1000*1000);
-		TSPInput input = new TSPInput(coordInterval, nodes);
-		short[] path = new TwoOpt().solveTSP(nodes, coordInterval);
+		short[] path = new TwoOpt().solveTSP(nodes);
 		for(short nodeIndex : path){
 			System.out.println(nodeIndex);
 		}
@@ -39,7 +37,7 @@ public class Main {
 		TSPInput tspInput = new TSPInput(coordInterval, nodes);
 		VisualizationParams params = new VisualizationParams(1000, 0);
 		VisualizerImpl visualizer = new VisualizerImpl(WINDOW_SIZE, tspInput, params);
-		new TwoOpt().solveTSP(nodes, coordInterval, visualizer);
+		new TwoOpt().solveTSP(nodes, visualizer);
 		System.out.println("done");
 	}
 	
