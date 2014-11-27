@@ -22,9 +22,23 @@ public class Node {
 		return (x-other.x)*(x-other.x) + (y-other.y)*(y-other.y);
 	}
 	
+	private double distance(Node other){
+		return Math.sqrt(sqDistance(other));
+	}
+	
+	public static double lengthOfPath(short[] path, Node[] nodes){
+		double length = 0;
+		Node prevNode = nodes[nodes.length - 1];
+		for(short nodeIndex : path){
+			Node node = nodes[nodeIndex];
+			length += node.distance(prevNode);
+			prevNode = node;
+		}
+		return length;
+	}
+	
 	public String toString(){
 		return "( " + doubleStr(x) + " ; " + doubleStr(y) + " )";
-//		return "(" + x + "," + y + ")";
 	}
 	
 	private String doubleStr(double x){
@@ -34,4 +48,6 @@ public class Node {
 		}
 		return s;
 	}
+	
+	
 }

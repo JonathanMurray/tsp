@@ -7,7 +7,7 @@ public class TwoOpt implements TSPSolver{
 	@Override
 	public short[] solveTSP(final Node[] nodes, final Interval coordInterval) {
 		//Call solveTSP with a mockup visualizer
-		return solveTSP(nodes, coordInterval, Visualizer.getMockup());
+		return solveTSP(nodes, coordInterval, new VisualizerMockup());
 	}
 
 	@Override
