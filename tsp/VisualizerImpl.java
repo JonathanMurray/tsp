@@ -125,8 +125,8 @@ public class VisualizerImpl extends JFrame implements Visualizer{
 		g.drawLine(fromX, fromY, toX, toY);
 	}
 	
-	private int coordToScreen(int coordinate){
-		return (int)(invisBorderWidth + (coordinate - coordInterval.min())/(float)coordInterval.length() * (Math.min(getWidth(), getHeight()) - 2*invisBorderWidth));
+	private int coordToScreen(double coordinate){
+		return (int)(invisBorderWidth + (coordinate - coordInterval.min())/(double)coordInterval.length() * (Math.min(getWidth(), getHeight()) - 2*invisBorderWidth));
 	}
 	
 	public static class TSPInput{

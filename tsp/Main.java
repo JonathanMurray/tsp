@@ -2,9 +2,10 @@ package tsp;
 import java.awt.Dimension;
 import java.util.Random;
 
-import static tsp.VisualizerImpl.TSPInput;
-import static tsp.VisualizerImpl.VisualizationParams;
+import tsp.VisualizerImpl.TSPInput;
+import tsp.VisualizerImpl.VisualizationParams;
 
+@SuppressWarnings("unused")
 public class Main {
 	
 	private static final short NUM_NODES = 550;
@@ -13,6 +14,18 @@ public class Main {
 	private static final Dimension WINDOW_SIZE = new Dimension(600,600);
 	
 	public static void main(String[] args) {
+		kattis();
+	}
+	
+	private static void kattis(){
+		Node[] nodes = Reader.getInput().toArray(new Node[]{});
+		short[] path = new TwoOpt().solveTSP(nodes);
+		for(short nodeIndex : path){
+			System.out.println(nodeIndex);
+		}
+	}
+	
+	private static void test(){
 		Random r = new Random();
 		Interval coordInterval = new Interval(MIN_COORD, MAX_COORD);
 		Node[] nodes = new Node[NUM_NODES];
@@ -24,11 +37,9 @@ public class Main {
 		TSPInput tspInput = new TSPInput(coordInterval, nodes);
 		VisualizationParams params = new VisualizationParams(1000, 0);
 		VisualizerImpl visualizer = new VisualizerImpl(WINDOW_SIZE, tspInput, params);
-		new TwoOpt().solveTSP(nodes, coordInterval, visualizer);
+		new TwoOpt().solveTSP(nodes, visualizer);
 		System.out.println("done");
 	}
-	
-	
 	
 	
 }

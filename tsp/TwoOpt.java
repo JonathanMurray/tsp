@@ -5,13 +5,13 @@ package tsp;
 public class TwoOpt implements TSPSolver{
 
 	@Override
-	public short[] solveTSP(final Node[] nodes, final Interval coordInterval) {
+	public short[] solveTSP(final Node[] nodes) {
 		//Call solveTSP with a mockup visualizer
-		return solveTSP(nodes, coordInterval, Visualizer.getMockup());
+		return solveTSP(nodes, new VisualizerMockup());
 	}
 
 	@Override
-	public short[] solveTSP(final Node[] nodes, final Interval coordInterval, final Visualizer visualizer) {
+	public short[] solveTSP(final Node[] nodes, final Visualizer visualizer) {
 		short[] path = new short[nodes.length];
 		for(short i = 0; i < nodes.length; i++){
 			path[i] = i;
