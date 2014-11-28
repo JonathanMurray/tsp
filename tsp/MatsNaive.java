@@ -11,8 +11,8 @@ public class MatsNaive {
 
 	public MatsNaive() {		
 		
-		ArrayList<Double> points = Reader.getInput();		
-		print(naive(points));
+//		ArrayList<Double> points = Reader.getInput();		
+//		print(naive(points));
 		
 		
 		

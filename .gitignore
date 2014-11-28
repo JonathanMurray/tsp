@@ -5,6 +5,8 @@
 # OS generated #
 # ============ #
 
+.classpath
+.project
 .DS_Store
 .DS_Store?
 ._*

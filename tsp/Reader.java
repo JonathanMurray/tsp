@@ -1,33 +1,54 @@
 package tsp;
- 
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Reader {
-	
+
 	public Reader() throws NumberFormatException, IOException {
-		Node[] nodes = readFile("graphs/g1");
-		
+
+		// File file = new File(getGraph("g1.txt"));
+		// System.out.println(file.getAbsolutePath());
+		Node[] nodes = readFile(getGraphPath("g1.txt"));
+
 		for (Node node : nodes) {
 			System.out.println(node);
 		}
 	}
 
-	public static void main(String[] args) throws NumberFormatException, IOException {
+	private String getGraphPath(String filename) {
+		// TODO, run from makefile or java, this is NOT the same, that's why
+		// this is needed. Hardcoded...
+		String s = System.getProperty("file.separator");
+		String makefilePath = "graphs" + s + filename;
+		String eclipsePath = "tsp" + s + makefilePath;
+
+		// Path when compiling from the makefile
+		File file = new File(makefilePath);
+		if (file.exists())
+			return file.getAbsolutePath();
+
+		// Path compiling from eclipse
+		return new File(eclipsePath).getAbsolutePath();
+	}
+
+	public static void main(String[] args) throws NumberFormatException,
+			IOException {
 		new Reader();
 	}
-	public static Node[] readFile(String path) throws NumberFormatException, IOException {
-			File file = new File(path);
 
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			
-			return read(br);
+	public static Node[] readFile(String path) throws NumberFormatException,
+			IOException {
+		File file = new File(path);
+
+		BufferedReader br = new BufferedReader(new FileReader(file));
+
+		return read(br);
 
 	}
 
@@ -48,9 +69,10 @@ public class Reader {
 		String xy[] = line.split(" ");
 		return new Node(Double.parseDouble(xy[0]), Double.parseDouble(xy[1]));
 	}
-	
-	private static Node[] read(BufferedReader br) throws NumberFormatException, IOException{
-		
+
+	private static Node[] read(BufferedReader br) throws NumberFormatException,
+			IOException {
+
 		int N = Integer.parseInt(br.readLine());
 		Node nodes[] = new Node[N];
 
@@ -61,7 +83,7 @@ public class Reader {
 			Node point = getNodeFromLine(line);
 			nodes[i] = point;
 		}
-		
+
 		return nodes;
 	}
 
