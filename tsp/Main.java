@@ -4,17 +4,18 @@ import java.util.Random;
 
 import tsp.VisualizerImpl.TSPInput;
 import tsp.VisualizerImpl.VisualizationParams;
-
+ 
 @SuppressWarnings("unused")
 public class Main {
-	
-	private static final short NUM_NODES = 550;
+	 
+	private static final short NUM_NODES = 20;
 	private static final int MIN_COORD = 0;
 	private static final int MAX_COORD = 1000;
 	private static final Dimension WINDOW_SIZE = new Dimension(600,600);
 	
 	public static void main(String[] args) {
-		kattis();
+//		kattis();
+		testVisualization();
 	}
 	
 	private static void kattis(){
@@ -26,6 +27,10 @@ public class Main {
 	}
 	
 	private static void test(){
+		
+	}
+	
+	private static void testVisualization(){
 		Random r = new Random();
 		Interval coordInterval = new Interval(MIN_COORD, MAX_COORD);
 		Node[] nodes = new Node[NUM_NODES];
