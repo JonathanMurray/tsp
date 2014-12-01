@@ -6,6 +6,25 @@ import java.util.LinkedList;
 
 public class MST implements TSPSolver {
 
+
+	
+	public void test(){
+		ArrayList<Node> points = Reader.getInput();
+		Node nodes[] = new Node[points.size()];
+		
+		points.toArray(nodes);
+		short[] path = solveTSP(nodes);
+		print(path);
+		
+		double length = Node.lengthOfPath(path, nodes);
+		System.out.println(length);
+		
+	}
+
+	public static void main(String[] args) {
+		new MST().test();
+	}
+	
 	@Override
 	public short[] solveTSP(Node[] nodes) {
 		return solveTSP(nodes, new VisualizerMockup());
