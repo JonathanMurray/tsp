@@ -13,7 +13,7 @@ import tsp.VisualizerImpl.VisualizationParams;
 @SuppressWarnings("unused")
 public class Main {
 	 
-	private static final short NUM_NODES = 500;
+	private static final short NUM_NODES = 1000;
 	private static final int MIN_COORD = 0;
 	private static final int MAX_COORD = 1000;
 	private static final Dimension WINDOW_SIZE = new Dimension(600,600);
@@ -34,32 +34,17 @@ public class Main {
 	
 	private static void compareSolvers() throws NumberFormatException, IOException{
 		List<String> testFiles = new ArrayList<String>();
-		testFiles.add("rand-50nodes.txt");
-		testFiles.add("rand-500nodes.txt");
 		testFiles.add("g1.txt");
+		testFiles.add("rand-50nodes.txt");
+		testFiles.add("rand-150nodes.txt");
+		testFiles.add("rand-500nodes.txt");
+		testFiles.add("rand-1000nodes.txt");
+		
 		List<TSPSolver> solvers = new ArrayList<TSPSolver>();
 		solvers.add(new TwoOpt());
 		solvers.add(new Naive());
 		solvers.add(new MST());
-		compareSolvers(solvers, testFiles);
-	}
-	
-	private static void compareSolvers(List<TSPSolver> solvers, List<String> testFiles) throws NumberFormatException, IOException{
-		HashMap<String, Node[]> graphs = new HashMap<String, Node[]>();
-		for(String testFile : testFiles){
-			Node[] graph = Reader.readGraphFile(testFile);
-			graphs.put(testFile, graph);
-		}
-		for(String testFile : graphs.keySet()){
-			Node[] graph = graphs.get(testFile);
-			System.out.println();
-			System.out.println(testFile + ":");
-			System.out.println("----------------");
-			for(TSPSolver solver : solvers){
-				Result result = Tester.test(solver, graph, 10);
-				System.out.println(solver + ": " + result);
-			}
-		}
+		Tester.compareSolvers(solvers, testFiles, 1);
 	}
 	
 	private static void testVisualization(){

@@ -1,8 +1,29 @@
 package tsp;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.List;
  
 public class Tester {
+	
+	public static void compareSolvers(List<TSPSolver> solvers, List<String> testFiles, int numRuns) throws NumberFormatException, IOException{
+		HashMap<String, Node[]> graphs = new HashMap<String, Node[]>();
+		for(String testFile : testFiles){
+			Node[] graph = Reader.readGraphFile(testFile);
+			graphs.put(testFile, graph);
+		}
+		for(String testFile : testFiles){
+			Node[] graph = graphs.get(testFile);
+			System.out.println();
+			System.out.println(testFile + ":");
+			System.out.println("----------------");
+			for(TSPSolver solver : solvers){
+				Result result = Tester.test(solver, graph, numRuns);
+				System.out.println(solver + ": " + result);
+			}
+		}
+	}
 	
 	/**
 	 * Run same test multiple times,  return mean result
