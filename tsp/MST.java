@@ -261,21 +261,21 @@ public class MST implements TSPSolver {
 	private class Dist implements Comparable<Dist> {
 		short a;
 		short b;
-		double distance;
+		double sqDistance;
 
-		public Dist(short a, short b, double distance) {
+		public Dist(short a, short b, double sqDistance) {
 			this.a = a;
 			this.b = b;
-			this.distance = distance;
+			this.sqDistance = sqDistance;
 		}
 
 		@Override
 		public int compareTo(Dist o) {
-			return Double.compare(distance, o.distance);
+			return Double.compare(sqDistance, o.sqDistance);
 		}
 
 		public String toString() {
-			return "(" + a + "," + b + ") " + distance;
+			return "(" + a + "," + b + ") " + sqDistance;
 		}
 
 	}
