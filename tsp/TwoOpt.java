@@ -2,6 +2,7 @@ package tsp;
 
 
 
+
 public class TwoOpt implements TSPSolver{
 
 	@Override
@@ -12,12 +13,14 @@ public class TwoOpt implements TSPSolver{
 
 	@Override
 	public short[] solveTSP(final Node[] nodes, final Visualizer visualizer) {
+		float[][] distances = DistanceMapping.getDistances(nodes);
 		short[] path = new short[nodes.length];
 		for(short i = 0; i < nodes.length; i++){
 			path[i] = i;
 		}
 		visualizer.setPath(path);
 		
+		int numSwaps = 0;
 		boolean didASwap = false;
 //		System.out.println(Arrays.toString(path));
 		while(true){
@@ -26,7 +29,7 @@ public class TwoOpt implements TSPSolver{
 				for(int k = i+1; k < path.length; k++){
 					visualizer.highlight(i, k);
 					visualizer.repaint();
-					didASwap = maybeSwap(nodes, path, i, k);
+					didASwap = maybeSwap(distances, nodes, path, i, k);
 					visualizer.repaint();
 					if(didASwap){
 						visualizer.sleep();
@@ -34,21 +37,32 @@ public class TwoOpt implements TSPSolver{
 					}
 				}
 			}
-			if(!didASwap){
+			if(didASwap){
+				numSwaps ++;
+			}else{
 				break;
 			}
 		}
+		System.out.println("Did " + numSwaps + " swaps!");
 		visualizer.dehighlight();
 		return path;
 	}
 	
-	private boolean maybeSwap(final Node[] nodes, final short[] path, final int i, final int k){
+	private boolean maybeSwap(float[][] distances, final Node[] nodes, final short[] path, final int i, final int k){
+		int before = path[i-1];
+		int first = path[i];
+		int last = path[k];
+		int after = path[(k+1)%path.length];
 		Node beforeSwap = nodes[path[i-1]];
 		Node firstSwap = nodes[path[i]];
 		Node lastSwap = nodes[path[k]];
 		Node afterSwap = nodes[path[(k+1) % path.length]];
 		double sqDistance = beforeSwap.sqDistance(firstSwap) + afterSwap.sqDistance(lastSwap);
 		double newSqDistance = beforeSwap.sqDistance(lastSwap) + afterSwap.sqDistance(firstSwap);
+
+//		double sqDistance = distances[before][first] + distances[after][last];
+//		double newSqDistance = distances[before][last] + distances[after][first];
+
 		if(newSqDistance < sqDistance){
 			reverseSubpath(path, i, k);
 			return true;
