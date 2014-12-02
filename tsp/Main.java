@@ -1,21 +1,27 @@
 package tsp;
 import java.awt.Dimension;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
+import tsp.Tester.Result;
 import tsp.VisualizerImpl.TSPInput;
 import tsp.VisualizerImpl.VisualizationParams;
  
 @SuppressWarnings("unused")
 public class Main {
 	 
-	private static final short NUM_NODES = 20;
+	private static final short NUM_NODES = 500;
 	private static final int MIN_COORD = 0;
 	private static final int MAX_COORD = 1000;
 	private static final Dimension WINDOW_SIZE = new Dimension(600,600);
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws NumberFormatException, IOException {
 //		kattis();
-		testVisualization();
+//		testVisualization();
+		compareSolvers();
 	}
 	
 	private static void kattis(){
@@ -26,8 +32,34 @@ public class Main {
 		}
 	}
 	
-	private static void test(){
-		
+	private static void compareSolvers() throws NumberFormatException, IOException{
+		List<String> testFiles = new ArrayList<String>();
+		testFiles.add("rand-50nodes.txt");
+		testFiles.add("rand-500nodes.txt");
+		testFiles.add("g1.txt");
+		List<TSPSolver> solvers = new ArrayList<TSPSolver>();
+		solvers.add(new TwoOpt());
+		solvers.add(new Naive());
+		solvers.add(new MST());
+		compareSolvers(solvers, testFiles);
+	}
+	
+	private static void compareSolvers(List<TSPSolver> solvers, List<String> testFiles) throws NumberFormatException, IOException{
+		HashMap<String, Node[]> graphs = new HashMap<String, Node[]>();
+		for(String testFile : testFiles){
+			Node[] graph = Reader.readGraphFile(testFile);
+			graphs.put(testFile, graph);
+		}
+		for(String testFile : graphs.keySet()){
+			Node[] graph = graphs.get(testFile);
+			System.out.println();
+			System.out.println(testFile + ":");
+			System.out.println("----------------");
+			for(TSPSolver solver : solvers){
+				Result result = Tester.test(solver, graph, 10);
+				System.out.println(solver + ": " + result);
+			}
+		}
 	}
 	
 	private static void testVisualization(){
@@ -38,6 +70,7 @@ public class Main {
 			int x = coordInterval.min() + r.nextInt(coordInterval.length());
 			int y = coordInterval.min() + r.nextInt(coordInterval.length());
 			nodes[i] = new Node(x, y); 
+			System.out.println(nodes[i]);
 		}
 		TSPInput tspInput = new TSPInput(coordInterval, nodes);
 		VisualizationParams params = new VisualizationParams(1000, 0);

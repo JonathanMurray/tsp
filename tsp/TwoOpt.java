@@ -68,4 +68,9 @@ public class TwoOpt implements TSPSolver{
 		array[index1] = array[index2];
 		array[index2] = tmp;
 	}
+	
+	@Override
+	public String toString() {
+		return "2-Opt";
+	}
 }

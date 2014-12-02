@@ -1,4 +1,6 @@
 package tsp;
+
+import java.text.DecimalFormat;
  
 public class Tester {
 	
@@ -14,7 +16,6 @@ public class Tester {
 		for (int i = 0; i < numRuns; i++) {
 			result.add(test(solver,nodes));
 		}
-		
 		result.divide(numRuns);
 		return result;
 	}
@@ -27,34 +28,34 @@ public class Tester {
 	 */
 	public static Result test(TSPSolver solver, Node[] nodes){
 		long time = System.currentTimeMillis();
-		
 		short[] path = solver.solveTSP(nodes);
-		
 		time = System.currentTimeMillis() - time;
-		
 		double length = Node.lengthOfPath(path, nodes);
 		return new Result(time,length);
 	}
 	
 	public static class Result{
-		long time;
-		double length;
+		long computationTime;
+		double totalPathLength;
 		
 		public Result(long time, double length){
-			this.time = time;
-			this.length = length;
-					
+			this.computationTime = time;
+			this.totalPathLength = length;
 		}
 		
 		public void add(Result result){
-			time += result.time;
-			length += result.length;
+			computationTime += result.computationTime;
+			totalPathLength += result.totalPathLength;
 		}
 		
 		public void divide(int val){
-			time /= val;
-			length /= val;
+			computationTime /= val;
+			totalPathLength /= val;
 		}
 		
+		public String toString(){
+			String length = new DecimalFormat("#0.00").format(totalPathLength);
+			return "[time: " + computationTime + ", length: " + length + "]";
+		}
 	}
 }

@@ -279,5 +279,10 @@ public class MST implements TSPSolver {
 		}
 
 	}
+	
+	@Override
+	public String toString() {
+		return "MST";
+	}
 
 }

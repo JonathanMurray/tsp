@@ -1,14 +1,9 @@
 package tsp;
 
-import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class MatsNaive implements TSPSolver {
+public class Naive implements TSPSolver {
 
 	/**
 	 * Used only for quick testing 
@@ -97,7 +92,12 @@ public class MatsNaive implements TSPSolver {
 	}
 
 	public static void main(String[] args) {
-		new MatsNaive().test();;
+		new Naive().test();;
+	}
+
+	@Override
+	public String toString() {
+		return "Naive";
 	}
 
 }
