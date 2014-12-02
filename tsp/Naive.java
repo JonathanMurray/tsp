@@ -1,6 +1,5 @@
 package tsp;
 
-import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 
 public class Naive implements TSPSolver {
@@ -67,29 +66,6 @@ public class Naive implements TSPSolver {
 		return nodes[i].sqDistance(nodes[j]);
 	}
 
-	/**
-	 * Calculates the distance between two points.
-	 * 
-	 * @param p1
-	 * @param p2
-	 * @return
-	 */
-	private int dist(Double p1, Double p2) {
-		// Convert to points
-		double x1 = p1.x;
-		double y1 = p1.y;
-
-		double x2 = p2.x;
-		double y2 = p2.y;
-
-		double a = x2 - x1;
-		double b = y2 - y1;
-
-		double c = Math.sqrt(a * a + b * b);
-
-		return (int) Math.round(c);
-
-	}
 
 	public static void main(String[] args) {
 		new Naive().test();;
