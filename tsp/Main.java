@@ -41,11 +41,10 @@ public class Main {
 		testFiles.add("rand-1000nodes.txt");
 		
 		List<TSPSolver> solvers = new ArrayList<TSPSolver>();
-		solvers.add(new TwoOpt());
 		solvers.add(new Naive());
 		solvers.add(new MST());
+		solvers.add(new TwoOpt());
 		solvers.add(new LinKernighan());
-		solvers.add(new SubPathOptimization());
 
 		Tester.compareSolvers(solvers, testFiles, 1);
 	}
