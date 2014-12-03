@@ -1,5 +1,7 @@
 package tsp;
 
+import java.util.HashSet;
+
 public class Node {
 	private double x;
 	private double y;
@@ -23,6 +25,19 @@ public class Node {
 
 	public double distance(Node other) {
 		return Math.sqrt(sqDistance(other));
+	}
+	
+	public static void assertValidPath(short[] path, Node[] nodes){
+		if(nodes.length != path.length){
+			throw new RuntimeException("Not even the same length");
+		}
+		HashSet<Short> seen = new HashSet<Short>();
+		for(short node : path){
+			if(seen.contains(node)){
+				throw new RuntimeException(node + " occurs more than once in the path!");
+			}
+			seen.add(node);
+		}
 	}
 
 	public static double lengthOfPath(short[] path, Node[] nodes) {

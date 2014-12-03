@@ -52,15 +52,15 @@ public class Tester {
 	 * @return
 	 */
 	public static Result test(TSPSolver solver, Node[] nodes){
-		long time = System.currentTimeMillis();
-		
 		Visualizer visualizer = new VisualizerMockup();
 		if(solver.toString().equals("Lin-Kernighan")){
 			visualizer = new VisualizerImpl("LK" , new Dimension(500,500), new TSPInput(new Interval(0, 1000), nodes), new VisualizationParams(0, 0));
 		} //TODO
+		long time = System.currentTimeMillis();
 		short[] path = solver.solveTSP(nodes, visualizer);
-		visualizer.close();
 		time = System.currentTimeMillis() - time;
+		visualizer.close();
+		Node.assertValidPath(path, nodes);
 		double length = Node.lengthOfPath(path, nodes);
 		return new Result(time,length);
 	}
