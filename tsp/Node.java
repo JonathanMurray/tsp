@@ -58,7 +58,7 @@ public class Node {
 			length += Math.round(nodes[path[i]].distance(nodes[path[i+1]]));
 		}
 		
-		Node first = nodes[0];
+		Node first = nodes[path[0]];
 		Node last = nodes[path[path.length-1]];
 		
 		length += Math.round(first.distance(last));
