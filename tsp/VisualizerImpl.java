@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -20,17 +21,17 @@ public class VisualizerImpl extends JFrame implements Visualizer{
 	private short[] path;
 	private final Interval coordInterval;
 	private final int invisBorderWidth = 40;
-	private HashMap<Integer, Interval> highlighted = new HashMap<Integer, Interval>();
-	private HashMap<Integer, Interval> highlightedLoose = new HashMap<Integer, Interval>();
+	private Map<Integer, Interval> highlighted = new HashMap<Integer, Interval>();
+	private Map<Integer, Interval> highlightedLoose = new HashMap<Integer, Interval>();
 	private List<Color> highlightColors = Arrays.asList(new Color[]{Color.green, Color.blue, Color.red, Color.pink, Color.pink, Color.pink, Color.pink});
 	private final int sleepMs;
 	
-	public VisualizerImpl(Dimension dimension, TSPInput tspInput){
-		this(dimension, tspInput, new VisualizationParams(0, 10));
+	public VisualizerImpl(String title, Dimension dimension, TSPInput tspInput){
+		this(title, dimension, tspInput, new VisualizationParams(0, 10));
 	}
 	
-	public VisualizerImpl(Dimension dimension, TSPInput tspInput, VisualizationParams visualizationParams){
-		super("Visualizer");
+	public VisualizerImpl(String title, Dimension dimension, TSPInput tspInput, VisualizationParams visualizationParams){
+		super(title);
 		this.nodes = tspInput.nodes;
 		this.path = new short[]{};
 		this.coordInterval = tspInput.coordInterval;
@@ -45,6 +46,12 @@ public class VisualizerImpl extends JFrame implements Visualizer{
         		paintEverything(g);
         	}
 		});
+        
+	}
+	
+	public void close(){
+		setVisible(false);
+		dispose();
 	}
 	
 	public void sleep(){
@@ -56,23 +63,23 @@ public class VisualizerImpl extends JFrame implements Visualizer{
 		}
 	}
 	
-	public void highlight(int colorIndex, int firstNode, int lastNode){
+	public synchronized void highlight(int colorIndex, int firstNode, int lastNode){
 		highlighted.put(colorIndex, new Interval(firstNode, lastNode));
 		repaint();
 	}
 	
-	public void highlightLoose(int colorIndex, int firstNode, int lastNode){
+	public synchronized void highlightLoose(int colorIndex, int firstNode, int lastNode){
 		highlightedLoose.put(colorIndex, new Interval(firstNode, lastNode));
 		repaint();
 	}
 	
-	public void dehighlight(int colorIndex){
+	public synchronized void dehighlight(int colorIndex){
 		highlighted.remove(colorIndex);
 		highlightedLoose.remove(colorIndex);
 		repaint();
 	}
 	
-	public void dehighlight(){
+	public synchronized void dehighlight(){
 		highlighted.clear();
 		highlightedLoose.clear();
 		repaint();
@@ -83,7 +90,7 @@ public class VisualizerImpl extends JFrame implements Visualizer{
 		repaint();
 	}
 
-	private void paintEverything(Graphics g){
+	private synchronized void paintEverything(Graphics g){
 		paintNodes(g);
 		paintPath(g);
 		for(int colorIndex : highlighted.keySet()){

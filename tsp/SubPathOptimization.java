@@ -38,7 +38,7 @@ public class SubPathOptimization implements TSPSolver {
 		}
 		// What to do here?
 
-		System.out.println("C: " + C + ", [" + from + ", " + to + "]");
+//		System.out.println("C: " + C + ", [" + from + ", " + to + "]");
 	}
 
 	public String toString() {

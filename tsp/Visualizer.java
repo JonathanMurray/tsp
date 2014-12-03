@@ -19,4 +19,6 @@ public interface Visualizer {
 	public void dehighlight(int colorIndex);
 	void dehighlight();
 	void setPath(short[] path);
+	
+	void close(); //closes the window
 }

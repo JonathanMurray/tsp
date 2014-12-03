@@ -62,7 +62,7 @@ public class Main {
 		}
 		TSPInput tspInput = new TSPInput(coordInterval, nodes);
 		VisualizationParams params = new VisualizationParams(1000, 0);
-		VisualizerImpl visualizer = new VisualizerImpl(WINDOW_SIZE, tspInput, params);
+		VisualizerImpl visualizer = new VisualizerImpl("Visualization", WINDOW_SIZE, tspInput, params);
 		new TwoOpt().solveTSP(nodes, visualizer);
 		System.out.println("done");
 	}

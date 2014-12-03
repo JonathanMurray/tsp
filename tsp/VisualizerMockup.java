@@ -8,4 +8,5 @@ public class VisualizerMockup implements Visualizer{
 	public void dehighlight(int colorIndex){}
 	public void dehighlight() {	}
 	public void setPath(short[] path) {}
+	public void close(){}
 }

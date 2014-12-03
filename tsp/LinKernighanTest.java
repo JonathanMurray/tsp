@@ -164,6 +164,7 @@ public class LinKernighanTest {
 		nodes = nodeList.toArray(new Node[]{});
 		
 		Visualizer visualizer = new VisualizerImpl(
+				"LK",
 				new Dimension(500,500), 
 				new TSPInput(new Interval(-2, 2), nodes),
 				new VisualizationParams(0, 20)
