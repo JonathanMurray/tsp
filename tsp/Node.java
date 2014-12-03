@@ -26,32 +26,6 @@ public class Node {
 	}
 
 	public static double lengthOfPath(short[] path, Node[] nodes) {
-
-		/**
-		 * The commented code produces the wrong result. Reference is that
-		 * g1.txt according to kattis will produce:
-		 * 
-		 * path: 0 8 5 4 3 9 6 2 1 7
-		 * 
-		 * length: 323
-		 * 
-		 * THIS, however, produces: 283 (or 381, by connecting the last two
-		 * nodes)
-		 */
-		// double length = 0;
-		// Node prevNode = nodes[nodes.length - 1];
-		// for(short nodeIndex : path){
-		// Node node = nodes[nodeIndex];
-		// length += node.distance(prevNode);
-		// prevNode = node;
-		// }
-		// return length;
-
-		/**
-		 * This code produces the correct result for g1, and should be more
-		 * trustworthy
-		 */
-		
 		double length = 0;
 		for (int i = 0; i < path.length - 1; i++) {
 			//According to instructions on kattis each distance should be rounded
@@ -63,7 +37,6 @@ public class Node {
 		
 		length += Math.round(first.distance(last));
 		return length;
-
 	}
 
 	public String toString() {
