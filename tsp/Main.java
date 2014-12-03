@@ -44,6 +44,7 @@ public class Main {
 		solvers.add(new TwoOpt());
 		solvers.add(new Naive());
 		solvers.add(new MST());
+		solvers.add(new LinKernighan());
 		Tester.compareSolvers(solvers, testFiles, 1);
 	}
 	

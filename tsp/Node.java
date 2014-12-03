@@ -21,7 +21,7 @@ public class Node {
 		return (x - other.x) * (x - other.x) + (y - other.y) * (y - other.y);
 	}
 
-	private double distance(Node other) {
+	public double distance(Node other) {
 		return Math.sqrt(sqDistance(other));
 	}
 
@@ -67,8 +67,8 @@ public class Node {
 	}
 
 	public String toString() {
-		return doubleStr(x) + " " + doubleStr(y);
-		// return "( " + doubleStr(x) + " ; " + doubleStr(y) + " )";
+//		return doubleStr(x) + " " + doubleStr(y);
+		return "( " + doubleStr(x) + " ; " + doubleStr(y) + " )";
 	}
 
 	private String doubleStr(double x) {

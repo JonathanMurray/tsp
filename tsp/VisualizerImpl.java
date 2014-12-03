@@ -2,6 +2,9 @@ package tsp;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -17,7 +20,9 @@ public class VisualizerImpl extends JFrame implements Visualizer{
 	private short[] path;
 	private final Interval coordInterval;
 	private final int invisBorderWidth = 40;
-	private Interval highlighted;
+	private HashMap<Integer, Interval> highlighted = new HashMap<Integer, Interval>();
+	private HashMap<Integer, Interval> highlightedLoose = new HashMap<Integer, Interval>();
+	private List<Color> highlightColors = Arrays.asList(new Color[]{Color.green, Color.blue, Color.red, Color.pink, Color.pink, Color.pink, Color.pink});
 	private final int sleepMs;
 	
 	public VisualizerImpl(Dimension dimension, TSPInput tspInput){
@@ -44,31 +49,59 @@ public class VisualizerImpl extends JFrame implements Visualizer{
 	
 	public void sleep(){
 		try {
+			repaint();
 			Thread.sleep(sleepMs);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
-
-	public void highlight(int firstNode, int lastNode){
-		highlighted = new Interval(firstNode, lastNode);
+	
+	public void highlight(int colorIndex, int firstNode, int lastNode){
+		highlighted.put(colorIndex, new Interval(firstNode, lastNode));
+		repaint();
+	}
+	
+	public void highlightLoose(int colorIndex, int firstNode, int lastNode){
+		highlightedLoose.put(colorIndex, new Interval(firstNode, lastNode));
+		repaint();
+	}
+	
+	public void dehighlight(int colorIndex){
+		highlighted.remove(colorIndex);
+		highlightedLoose.remove(colorIndex);
+		repaint();
 	}
 	
 	public void dehighlight(){
-		highlighted = null;
+		highlighted.clear();
+		highlightedLoose.clear();
+		repaint();
 	}
 	
 	public void setPath(short[] path){
 		this.path = path;
+		repaint();
 	}
 
 	private void paintEverything(Graphics g){
 		paintNodes(g);
 		paintPath(g);
-		if(highlighted != null){
+		for(int colorIndex : highlighted.keySet()){
 			Color c = g.getColor();
-			g.setColor(Color.GREEN);
-			paintSubPath(g, highlighted.min(), highlighted.max(), false);
+			g.setColor(highlightColors.get(colorIndex));
+			Interval between = highlighted.get(colorIndex);
+//			if(Math.abs(between.max() - between.min()) > 1){
+//				System.err.println("bad highlight color(" + colorIndex + "): " + between.min() + " <--> " + between.max());
+//				for(int i = 0; i < 15; i++){sleep();}//TODO
+//			}
+			paintSubPath(g, between.min(), between.max(), false);
+			g.setColor(c);
+		}
+		for(int colorIndex : highlightedLoose.keySet()){
+			Color c = g.getColor();
+			g.setColor(highlightColors.get(colorIndex));
+			Interval between = highlightedLoose.get(colorIndex);
+			paintEdge(g, nodes[between.min()], nodes[between.max()]);
 			g.setColor(c);
 		}
 	}
