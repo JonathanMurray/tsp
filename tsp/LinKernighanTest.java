@@ -170,7 +170,7 @@ public class LinKernighanTest {
 				new VisualizationParams(0, 20)
 		);
 		
-		short[] path = new LinKernighan().solveTSP(nodes, visualizer);
+		short[] path = new LinKernighan(500).solveTSP(nodes, visualizer);
 		System.out.println("pathlen: " + Node.lengthOfPath(path, nodes));
 		Assert.assertTrue(Node.lengthOfPath(path, nodes) <= 16.1);
 	}

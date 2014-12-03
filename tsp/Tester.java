@@ -54,7 +54,7 @@ public class Tester {
 	public static Result test(TSPSolver solver, Node[] nodes){
 		Visualizer visualizer = new VisualizerMockup();
 		if(solver.toString().equals("Lin-Kernighan")){
-			visualizer = new VisualizerImpl("LK" , new Dimension(500,500), new TSPInput(new Interval(0, 1000), nodes), new VisualizationParams(0, 0));
+//			visualizer = new VisualizerImpl("LK" , new Dimension(500,500), new TSPInput(new Interval(0, 1000), nodes), new VisualizationParams(0, 0));
 		} //TODO
 		long time = System.currentTimeMillis();
 		short[] path = solver.solveTSP(nodes, visualizer);

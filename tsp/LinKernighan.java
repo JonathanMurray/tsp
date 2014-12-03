@@ -5,6 +5,25 @@ import java.util.Arrays;
 
 
 public class LinKernighan implements TSPSolver{
+	
+//	rand-1000nodes.txt:
+//		----------------
+//		Naive: [time: 20, length: 29622,00]
+//		MST: [time: 344, length: 31580,00]
+//		Did 7632 swaps!
+//		2-Opt: [time: 66816, length: 24624,00]
+//		Lin-Kernighan(200): [time: 6565, length: 33112,00]
+//		Lin-Kernighan(300): [time: 8359, length: 25743,00]
+//		Lin-Kernighan(400): [time: 8670, length: 26196,00]
+//		Lin-Kernighan(500): [time: 8768, length: 25484,00]
+//		Lin-Kernighan(600): [time: 11363, length: 25961,00]
+//		Lin-Kernighan(700): [time: 13983, length: 26100,00]
+	
+	private final int LIMIT;
+	
+	public LinKernighan(int limit) {
+		this.LIMIT = limit;
+	}
 
 	@Override
 	public short[] solveTSP(Node[] nodes) {
@@ -20,11 +39,11 @@ public class LinKernighan implements TSPSolver{
 		return newPath;
 	}
 	
-	private static short get(short[] path, int index){
+	private short get(short[] path, int index){
 		return path[index % path.length];
 	}
 	
-	static short[] setX1(Visualizer visualizer, Node[] nodes, short[] path){
+	short[] setX1(Visualizer visualizer, Node[] nodes, short[] path){
 		println("nodes: " + Arrays.toString(nodes));
 		println("start path: " + Arrays.toString(path));
 		for(int t1Index = 0; t1Index < path.length; t1Index++){
@@ -50,8 +69,9 @@ public class LinKernighan implements TSPSolver{
 		return path;
 	}
 	
-	static short[] setY1(Visualizer visualizer, Node[] nodes, short[] path, Edge x1){
-		for(int t3Index = (x1.toIndex + 2)%path.length; t3Index != (x1.fromIndex + path.length - 2)%path.length; t3Index = (t3Index + 1)%path.length){
+	short[] setY1(Visualizer visualizer, Node[] nodes, short[] path, Edge x1){
+		int numTries = 0;
+		for(int t3Index = (x1.toIndex + 2)%path.length; t3Index != (x1.fromIndex + path.length - 2)%path.length && numTries < LIMIT; t3Index = (t3Index + 1)%path.length){
 			Edge y1 = new Edge(path, x1.toIndex, t3Index);
 			println("y1: " + y1);
 			visualizer.highlightLoose(4, path[y1.fromIndex], path[y1.toIndex]);
@@ -68,11 +88,12 @@ public class LinKernighan implements TSPSolver{
 					return newPath; //Next step success
 				}
 			}
+			numTries ++;
 		}
 		return null; //This step failed
 	}
 	
-	static short[] setX2(Visualizer visualizer, Node[] nodes, short[] path, Edge x1, Edge y1){
+	short[] setX2(Visualizer visualizer, Node[] nodes, short[] path, Edge x1, Edge y1){
 //		for(int t4Index = y1.toIndex - 1; t4Index > y1.fromIndex; t4Index --){
 			int t4Index = (path.length + y1.toIndex - 1) % path.length;
 			println("finding x2... t4Index == " + t4Index);
@@ -88,7 +109,6 @@ public class LinKernighan implements TSPSolver{
 				println("Found good tour");
 				println(x1.dist(nodes) + " + " + x2.dist(nodes) + " > " + y1.dist(nodes) + " + " + possibleY2.dist(nodes));
 				println((x1.dist(nodes) + x2.dist(nodes)) + " > " + (y1.dist(nodes) + possibleY2.dist(nodes)));
-//				visualizer.repaint();
 				if(findFirstOccurence(x1.toIndex, x2.toIndex, path) == x1.toIndex){
 					TwoOpt.swap(path, x1.toIndex, x2.toIndex);
 					println("A Swap between " + x1.toIndex + " and " + x2.toIndex);
@@ -96,7 +116,6 @@ public class LinKernighan implements TSPSolver{
 					TwoOpt.swap(path, x2.fromIndex, x1.fromIndex); //TODO
 					println("B Swap between " + x2.fromIndex + " and " + x1.fromIndex);
 				}
-				
 				
 				return path; //Found a good 2-swap [SUCCESS]
 			}else{
@@ -112,7 +131,7 @@ public class LinKernighan implements TSPSolver{
 		return null; //This step failed
 	}
 	
-	private static int findFirstOccurence(int a, int b, short[] array){
+	private int findFirstOccurence(int a, int b, short[] array){
 		for(short x : array){
 			if(x == a){
 				return a;
@@ -124,8 +143,9 @@ public class LinKernighan implements TSPSolver{
 		throw new RuntimeException("Neither " + a + " or " + b + " was found in " + Arrays.toString(array));
 	}
 	
-	static short[] setY2(Visualizer visualizer, Node[] nodes, short[] path, Edge x1, Edge y1, Edge x2){
-		for(int t5Index = (x2.fromIndex + 2)%path.length; t5Index != (x1.fromIndex + path.length - 1)%path.length; t5Index = (t5Index + 1)%path.length){
+	short[] setY2(Visualizer visualizer, Node[] nodes, short[] path, Edge x1, Edge y1, Edge x2){
+		int numTries = 0;
+		for(int t5Index = (x2.fromIndex + 2)%path.length; t5Index != (x1.fromIndex + path.length - 1)%path.length && numTries < LIMIT; t5Index = (t5Index + 1)%path.length){
 			Edge y2 = new Edge(path, x2.toIndex, t5Index);
 			println("y2: " + y2);
 			visualizer.highlightLoose(5, path[y2.fromIndex], path[y2.toIndex]);
@@ -141,11 +161,12 @@ public class LinKernighan implements TSPSolver{
 					return newPath; //Next step success
 				}
 			}
+			numTries ++;
 		}
 		return null; //This step failed
 	}
 	
-	static short[] setX3Y3(Visualizer visualizer, Node[] nodes, short[] path, Edge x1, Edge y1, Edge x2, Edge y2){
+	short[] setX3Y3(Visualizer visualizer, Node[] nodes, short[] path, Edge x1, Edge y1, Edge x2, Edge y2){
 //		for(int t6Index = y2.toIndex - 1; t6Index > x2.fromIndex; t6Index --){
 			int t6Index = y2.toIndex - 1;
 			Edge x3 = new Edge(path, y2.toIndex, t6Index);
@@ -168,7 +189,7 @@ public class LinKernighan implements TSPSolver{
 		return null;
 	}
 	
-	static short[] improvePathWithSwap(Node[] nodes, short[] path, Edge x1, Edge y1, Edge x2, Edge y2, Edge x3, Edge y3){
+	short[] improvePathWithSwap(Node[] nodes, short[] path, Edge x1, Edge y1, Edge x2, Edge y2, Edge x3, Edge y3){
 //		println("improving with swap:");
 //		println("x1: " + x1);
 //		println("y1: " + y1);
@@ -205,7 +226,7 @@ public class LinKernighan implements TSPSolver{
 	 *	copySegment(src, dst, 2, 6, 3, true);
 	 *  // dst == [0, 0, 0, 0, 0, 0, 4, 3, 2, 0]
 	 */
-	static void copySegment(short[] src, short[] dst, int srcStart, int dstStart, int len, boolean reverseTheSegment){
+	void copySegment(short[] src, short[] dst, int srcStart, int dstStart, int len, boolean reverseTheSegment){
 //		println("-----------");
 //		println("src: " + Arrays.toString(src));
 //		println("dst: " + Arrays.toString(dst));
@@ -225,7 +246,7 @@ public class LinKernighan implements TSPSolver{
 		println("dst: " + Arrays.toString(dst));
 	}
 
-	static short[] generateStartPath(int numNodes){
+	short[] generateStartPath(int numNodes){
 		short[] path = new short[numNodes];
 		for(short i = 0; i < numNodes; i++){
 			path[i] = i;
@@ -234,10 +255,10 @@ public class LinKernighan implements TSPSolver{
 	}
 	
 	public String toString(){
-		return "Lin-Kernighan";
+		return "Lin-Kernighan(" + LIMIT + ")";
 	}
 	
-	static class Edge{
+	class Edge{
 		//NOTE:
 		//These indices denote the edge's position IN THE PATH, not in the nodes-array
 		int fromIndex;
@@ -266,7 +287,7 @@ public class LinKernighan implements TSPSolver{
 		}
 	}
 	
-	private static void println(Object str){
+	private void println(Object str){
 //		System.out.println(str);
 	}
 
