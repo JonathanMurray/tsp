@@ -19,14 +19,14 @@ public class Main {
 	private static final Dimension WINDOW_SIZE = new Dimension(600,600);
 	
 	public static void main(String[] args) throws NumberFormatException, IOException {
-//		kattis();
+//		kattis(new TwoOpt());
 //		testVisualization();
 		compareSolvers();
 	}
 	
-	private static void kattis(){
+	private static void kattis(TSPSolver solver){
 		Node[] nodes = Reader.getInput().toArray(new Node[]{});
-		short[] path = new TwoOpt().solveTSP(nodes);
+		short[] path = solver.solveTSP(nodes);
 		for(short nodeIndex : path){
 			System.out.println(nodeIndex);
 		}
@@ -45,6 +45,8 @@ public class Main {
 		solvers.add(new Naive());
 		solvers.add(new MST());
 		solvers.add(new LinKernighan());
+		solvers.add(new SubPathOptimization());
+
 		Tester.compareSolvers(solvers, testFiles, 1);
 	}
 	

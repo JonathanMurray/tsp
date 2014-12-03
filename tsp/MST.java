@@ -37,7 +37,7 @@ public class MST implements TSPSolver {
 	public short[] solveTSP(Node[] nodes, Visualizer visualizer) {
 
 		// Create a list of distances between nodes
-		ArrayList<Dist> dists = getDistList(nodes);
+		ArrayList<Dist> dists = Dist.getDistList(nodes);
 
 		// Sort the list, by increasing distances
 		Collections.sort(dists);
@@ -149,35 +149,6 @@ public class MST implements TSPSolver {
 		return neighbours[dists.get(0).a];
 	}
 
-	/**
-	 * This will generate a list of all the distances between the nodes.
-	 * 
-	 * Size: It will be of size (n^2 - n) / 2; reason: 1. All distances from a
-	 * -> b implies the same from b -> a, this manages to cut listsize in half;
-	 * 2. all points from a -> a (from to same node) are trivial and is not
-	 * included, removes n.
-	 * 
-	 * @param nodes
-	 * @return
-	 */
-	private ArrayList<Dist> getDistList(Node[] nodes) {
-		
-		//We know the exact size to be this 
-		int size = (nodes.length * nodes.length - nodes.length) /2 ;
-		ArrayList<Dist> dists = new ArrayList<Dist>(size);
-		
-		for (short i = 0; i < nodes.length - 1; i++) {
-			for (short j = (short) (1 + i); j < nodes.length; j++) {
-				double distance = nodes[i].sqDistance(nodes[j]);
-				dists.add(new Dist(i, j, distance));
-			}
-		}
-//		System.out.println(dists.size() + " " + size);
-
-		return dists;
-
-	}
-
 	private void print(short[] path) {
 		String str = "Path: ";
 		for (short s : path) {
@@ -194,10 +165,6 @@ public class MST implements TSPSolver {
 		public Vertex(short id) {
 			this.id = id;
 			neighbours = new LinkedList<Vertex>();
-		}
-
-		public Vertex() {
-			id = -1;
 		}
 
 		public boolean isAlreadyDistantNeighbourTo(Vertex vertex) {
@@ -257,28 +224,6 @@ public class MST implements TSPSolver {
 		}
 	}
 
-	// Object for handling distances between nodes a to b
-	private class Dist implements Comparable<Dist> {
-		short a;
-		short b;
-		double sqDistance;
-
-		public Dist(short a, short b, double sqDistance) {
-			this.a = a;
-			this.b = b;
-			this.sqDistance = sqDistance;
-		}
-
-		@Override
-		public int compareTo(Dist o) {
-			return Double.compare(sqDistance, o.sqDistance);
-		}
-
-		public String toString() {
-			return "(" + a + "," + b + ") " + sqDistance;
-		}
-
-	}
 	
 	@Override
 	public String toString() {
