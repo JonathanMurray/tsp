@@ -35,15 +35,17 @@ public class Main {
 	private static void compareSolvers() throws NumberFormatException, IOException{
 		List<String> testFiles = new ArrayList<String>();
 		testFiles.add("g1.txt");
-		testFiles.add("rand-50nodes.txt");
-		testFiles.add("rand-150nodes.txt");
-		testFiles.add("rand-500nodes.txt");
-		testFiles.add("rand-1000nodes.txt");
+//		testFiles.add("rand-50nodes.txt");
+//		testFiles.add("rand-150nodes.txt");
+//		testFiles.add("rand-500nodes.txt");
+//		testFiles.add("rand-1000nodes.txt");
 		
 		List<TSPSolver> solvers = new ArrayList<TSPSolver>();
-		solvers.add(new TwoOpt());
-		solvers.add(new Naive());
-		solvers.add(new MST());
+//		solvers.add(new TwoOpt());
+//		solvers.add(new Naive());
+//		solvers.add(new MST());
+//		solvers.add(new NearestNeighbour());
+		solvers.add(new SubPathOptimization());
 		Tester.compareSolvers(solvers, testFiles, 1);
 	}
 	
