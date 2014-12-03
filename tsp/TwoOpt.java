@@ -13,6 +13,7 @@ public class TwoOpt implements TSPSolver{
 
 	@Override
 	public short[] solveTSP(final Node[] nodes, final Visualizer visualizer) {
+		//distances doesn't seem to help //TODO
 		float[][] distances = DistanceMapping.getDistances(nodes);
 		short[] path = new short[nodes.length];
 		for(short i = 0; i < nodes.length; i++){

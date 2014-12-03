@@ -19,6 +19,4 @@ public interface TSPSolver {
 	 * @return A path (a list of node-indices)
 	 */
 	short[] solveTSP(Node[] nodes, Visualizer visualizer);
-
-	String toString();
 }
