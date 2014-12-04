@@ -33,7 +33,6 @@ public class VisualizerImpl extends JFrame implements Visualizer{
 	public VisualizerImpl(String title, Dimension dimension, TSPInput tspInput, VisualizationParams visualizationParams){
 		super(title);
 		this.nodes = tspInput.nodes;
-		this.path = new short[]{};
 		this.coordInterval = tspInput.coordInterval;
 		this.waitMsForRepaint = visualizationParams.waitMsForRepaint;
 		this.sleepMs = visualizationParams.sleepMs;
@@ -91,6 +90,9 @@ public class VisualizerImpl extends JFrame implements Visualizer{
 	}
 
 	private synchronized void paintEverything(Graphics g){
+		if(path == null){
+			return;
+		}
 		paintNodes(g);
 		paintPath(g);
 		for(int colorIndex : highlighted.keySet()){
