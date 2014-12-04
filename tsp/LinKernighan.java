@@ -1,7 +1,6 @@
 package tsp;
 
 import java.util.Arrays;
-import java.util.List;
 
 
 
@@ -26,8 +25,14 @@ public class LinKernighan implements TSPSolver{
 	
 	private final int LIMIT;
 //	private List<Dist>[] distanceMatrix;
+	float[][] distances;
 	private int num2Swaps = 0;
 	private int num3Swaps = 0;
+	
+	float x1Dist;
+	float y1Dist;
+	float x2Dist;
+	float y2Dist;
 	
 	public LinKernighan(int limit) {
 		this.LIMIT = limit;
@@ -46,7 +51,7 @@ public class LinKernighan implements TSPSolver{
 	}
 	
 	public short[] solveTSP(Node[] nodes, Visualizer visualizer, short[] path){
-//		distanceMatrix = Dist.getDistNearestMatrix(nodes);
+		distances = DistanceMapping.getDistances(nodes);
 		visualizer.setPath(path);
 		visualizer.sleep();
 		short[] newPath = setX1(visualizer, nodes, path);
@@ -55,26 +60,26 @@ public class LinKernighan implements TSPSolver{
 		return newPath;
 	}
 	
-	private short get(short[] path, int index){
-		return path[index % path.length];
-	}
-	
-	private static boolean within(int x, int min, int max, int modulo){
-		int diff1 = (modulo + x - min) % modulo;
-		int diff2 = (modulo + max - min) % modulo;
-		return diff2 >= diff1;
-	}
+//	private short get(short[] path, int index){
+//		return path[index % path.length];
+//	}
+//	
+//	private static boolean within(int x, int min, int max, int modulo){
+//		int diff1 = (modulo + x - min) % modulo;
+//		int diff2 = (modulo + max - min) % modulo;
+//		return diff2 >= diff1;
+//	}
 	
 	short[] setX1(Visualizer visualizer, Node[] nodes, short[] path){
 		println("nodes: " + Arrays.toString(nodes));
 //		System.out.println("start path: " + Arrays.toString(path));
 //		System.out.println("length: " + Node.lengthOfPath(path, nodes));
-		for(int t1Index = 0; t1Index < path.length; t1Index++){
-			Edge x1 = new Edge(path, t1Index, t1Index + 1);
+		for(short t1Index = 0; t1Index < path.length; t1Index++){
+//			Edge x1 = new Edge(path, t1Index, t1Index + 1);
 //			println("x1: " + x1);
 //			visualizer.highlightLoose(0, path[x1.fromIndex], path[x1.toIndex]);
 //			visualizer.sleep();
-			short[] newPath = setY1(visualizer, nodes, path, x1);
+			short[] newPath = setY1(visualizer, nodes, path, t1Index, (short) ((t1Index + 1) % path.length));
 //			visualizer.dehighlight(4);
 			if(newPath != null){
 //				println("\nFound new path: " + Arrays.toString(newPath) + "\n");
@@ -92,50 +97,26 @@ public class LinKernighan implements TSPSolver{
 		return path;
 	}
 	
-	short[] setY1(Visualizer visualizer, Node[] nodes, short[] path, Edge x1){
+	short[] setY1(Visualizer visualizer, Node[] nodes, short[] path, short t1Index, short t2Index){
 		int numTries = 0;
+	
+		x1Dist = distances[path[t2Index]][path[t1Index]];
 		
-		
-//		List<Dist> nearestNodes = distanceMatrix[x1.toIndex];
-//		for(Dist link : nearestNodes){
-//			if(link.a != x1.toIndex){
-//				throw new RuntimeException(link.a + " != " + x1.toIndex);
-//			}
-//			int t3Index = link.b;
-//			if(!within(t3Index, x1.toIndex + 2, x1.fromIndex - 3, path.length)){
-//				continue;
-//			}
-//			Edge y1 = new Edge(path, x1.toIndex, t3Index);
-//			
-//			boolean xIsBigger = x1.sqDist(nodes) > y1.sqDist(nodes);
-//			if(!xIsBigger){
-//				break; //They are sorted in an ascending order!
-//			}
-//			visualizer.highlightLoose(4, path[y1.fromIndex], path[y1.toIndex]);
-//			visualizer.sleep();
-//			short[] newPath = setX2(visualizer, nodes, path, x1, y1); 
-//			visualizer.dehighlight(1);
-//			visualizer.sleep();
-//			if(newPath != null){
-//				visualizer.setPath(newPath);
-//				return newPath; //Next step success
-//			}
-//		}
-//		return null;
-		
-		
-		for(int t3Index = (x1.toIndex + 2)%path.length; t3Index != (x1.fromIndex + path.length - 2)%path.length  && numTries < LIMIT; t3Index = (t3Index + 1)%path.length){
+		for(short t3Index = (short) ((t2Index + 2)%path.length); t3Index != (t1Index + path.length - 2)%path.length  && numTries < LIMIT; t3Index = (short) ((t3Index + 1)%path.length)){
 			
 //			println("y1: " + y1);
 //			visualizer.highlightLoose(4, path[y1.fromIndex], path[y1.toIndex]);
 //			visualizer.sleep();
-			double ySqDist = nodes[path[x1.toIndex]].sqDistance(nodes[path[t3Index]]);
-			boolean xIsBigger = x1.sqDist(nodes) > ySqDist;
+//			double ySqDist = nodes[path[t2Index]].sqDistance(nodes[path[t3Index]]);
+//			double xSqDist = nodes[path[t1Index]].sqDistance(nodes[path[t2Index]]);
+//			boolean xIsBigger = xSqDist > ySqDist;
+			y1Dist = distances[path[t2Index]][path[t3Index]];
+			boolean xIsBigger = x1Dist > y1Dist;
 //			boolean xIsBigger = x1.sqDist(nodes) > y1.sqDist(nodes);
 			if(xIsBigger){
-				Edge y1 = new Edge(path, x1.toIndex, t3Index);
+//				Edge y1 = new Edge(path, t2Index, t3Index);
 //				println("found smaller y1");
-				short[] newPath = setX2(visualizer, nodes, path, x1, y1); 
+				short[] newPath = setX2(visualizer, nodes, path, t1Index, t2Index, t3Index); 
 //				visualizer.dehighlight(1);
 //				visualizer.sleep();
 				if(newPath != null){
@@ -148,9 +129,9 @@ public class LinKernighan implements TSPSolver{
 		return null; //This step failed
 	}
 	
-	short[] setX2(Visualizer visualizer, Node[] nodes, short[] path, Edge x1, Edge y1){
+	short[] setX2(Visualizer visualizer, Node[] nodes, short[] path, short t1Index, short t2Index, short t3Index){
 //		for(int t4Index = y1.toIndex - 1; t4Index > y1.fromIndex; t4Index --){
-			int t4Index = (path.length + y1.toIndex - 1) % path.length;
+			short t4Index = (short) ((path.length + t3Index - 1) % path.length);
 //			println("finding x2... t4Index == " + t4Index);
 			
 //			println("x2: " + x2);
@@ -159,9 +140,16 @@ public class LinKernighan implements TSPSolver{
 			
 //			println("________________\n");
 //			println("possible y2: " + possibleY2);
-			double x2Dist = nodes[path[y1.toIndex]].distance(nodes[path[t4Index]]);
-			double y2Dist = nodes[path[t4Index]].distance(nodes[path[x1.fromIndex]]);
-			boolean foundGoodTour = x1.dist(nodes) + x2Dist > y1.dist(nodes) + y2Dist;
+//			double x2Dist = nodes[path[t3Index]].distance(nodes[path[t4Index]]);
+//			double y2Dist = nodes[path[t4Index]].distance(nodes[path[t1Index]]);
+//			double x1Dist = nodes[path[t1Index]].distance(nodes[path[t2Index]]);
+//			double y1Dist = nodes[path[t2Index]].distance(nodes[path[t3Index]]);
+			x2Dist = distances[path[t4Index]][path[t3Index]];
+			float possibleY2Dist = distances[path[t4Index]][path[t1Index]];
+			boolean foundGoodTour = x1Dist + x2Dist > y1Dist + possibleY2Dist;
+//			float x1Dist = distances[path[t1Index]][path[t2Index]];
+//			float y1Dist = distances[path[t2Index]][path[t3Index]];
+//			boolean foundGoodTour = x1Dist + x2Dist > y1Dist + y2Dist;
 //			boolean foundGoodTour = x1.dist(nodes) + x2.dist(nodes) > y1.dist(nodes) + possibleY2.dist(nodes);
 //			Edge x2 = new Edge(path, y1.toIndex, t4Index);
 			if(foundGoodTour){
@@ -169,18 +157,18 @@ public class LinKernighan implements TSPSolver{
 //				println("Found good tour");
 //				println(x1.dist(nodes) + " + " + x2.dist(nodes) + " > " + y1.dist(nodes) + " + " + possibleY2.dist(nodes));
 //				println((x1.dist(nodes) + x2.dist(nodes)) + " > " + (y1.dist(nodes) + possibleY2.dist(nodes)));
-				if(findFirstOccurence(x1.toIndex, t4Index /*x2.toIndex*/, path) == x1.toIndex){
-					TwoOpt.swap(path, x1.toIndex, t4Index /*x2.toIndex*/);
+				if(findFirstOccurence(t2Index, t4Index /*x2.toIndex*/, path) == t2Index){
+					TwoOpt.swap(path, t2Index, t4Index /*x2.toIndex*/);
 //					println("A Swap between " + x1.toIndex + " and " + x2.toIndex);
 				}else{
-					TwoOpt.swap(path, y1.toIndex /*x2.fromIndex*/, x1.fromIndex); //TODO
+					TwoOpt.swap(path, t3Index /*x2.fromIndex*/, t1Index); //TODO
 //					println("B Swap between " + x2.fromIndex + " and " + x1.fromIndex);
 				}
 				num2Swaps ++;
 				return path; //Found a good 2-swap [SUCCESS]
 			}else{
-				Edge x2 = new Edge(path, y1.toIndex, t4Index);
-				short[] newPath = setY2(visualizer, nodes, path, x1, y1, x2);
+//				Edge x2 = new Edge(path, y1.toIndex, t4Index);
+				short[] newPath = setY2(visualizer, nodes, path, t1Index, t2Index, t3Index, t4Index);
 //				visualizer.dehighlight(5);
 //				visualizer.sleep();
 				if(newPath != null){
@@ -204,54 +192,24 @@ public class LinKernighan implements TSPSolver{
 		throw new RuntimeException("Neither " + a + " or " + b + " was found in " + Arrays.toString(array));
 	}
 	
-	short[] setY2(Visualizer visualizer, Node[] nodes, short[] path, Edge x1, Edge y1, Edge x2){
+	short[] setY2(Visualizer visualizer, Node[] nodes, short[] path, short t1Index, short t2Index, short t3Index, short t4Index){
 		int numTries = 0;
+
 		
-//		for(Dist link : distanceMatrix[x2.toIndex]){
-//			if(link.a != x2.toIndex){
-//				throw new RuntimeException(link.a + " != " + x2.toIndex);
-//			}
-//			int t5Index = link.b;
-//			if(!within(t5Index, x2.fromIndex + 2, x1.fromIndex - 2, path.length)){
-//				continue;
-//			}
-//			Edge y2 = new Edge(path, x2.toIndex, t5Index);
-//			println("y2: " + y2);
-//			boolean xIsBigger = x2.sqDist(nodes) > y2.sqDist(nodes);
-//			if(!xIsBigger){
-//				break;
-//			}
-//			visualizer.highlightLoose(5, path[y2.fromIndex], path[y2.toIndex]);
-//			visualizer.sleep();
-//			short[] newPath = setX3Y3(visualizer, nodes, path, x1, y1, x2, y2);
-//			visualizer.dehighlight(2);
-//			visualizer.dehighlight(6);
-//			visualizer.sleep();
-//			if(newPath != null){
-//				visualizer.setPath(newPath);
-//				return newPath; //Next step success
-//			}
-//			
-//		}
-//		return null;
-		
-		
-		
-		
-		
-		
-		
-		for(int t5Index = (x2.fromIndex + 2)%path.length; t5Index != (x1.fromIndex + path.length - 1)%path.length && numTries < LIMIT; t5Index = (t5Index + 1)%path.length){
+		for(short t5Index = (short) ((t3Index + 2)%path.length); t5Index != (t1Index + path.length - 1)%path.length && numTries < LIMIT; t5Index = (short) ((t5Index + 1)%path.length)){
 //			Edge y2 = new Edge(path, x2.toIndex, t5Index);
 //			println("y2: " + y2);
 //			visualizer.highlightLoose(5, path[y2.fromIndex], path[y2.toIndex]);
 //			visualizer.sleep();
-			double y2SqDist = nodes[path[x2.toIndex]].sqDistance(nodes[path[t5Index]]);
-			boolean xIsBigger = x2.sqDist(nodes) > y2SqDist;
+//			double y2SqDist = nodes[path[t4Index]].sqDistance(nodes[path[t5Index]]);
+//			double x2SqDist = nodes[path[t3Index]].sqDistance(nodes[path[t4Index]]);
+//			boolean xIsBigger = x2SqDist > y2SqDist;
+			y2Dist = distances[path[t4Index]][path[t5Index]];
+			boolean xIsBigger = x1Dist + x2Dist > y1Dist + y2Dist;
 //			boolean xIsBigger = x2.sqDist(nodes) > y2.sqDist(nodes);
 			if(xIsBigger){
-				Edge y2 = new Edge(path, x2.toIndex, t5Index);
-				short[] newPath = setX3Y3(visualizer, nodes, path, x1, y1, x2, y2);
+//				Edge y2 = new Edge(path, t4Index, t5Index);
+				short[] newPath = setX3Y3(visualizer, nodes, path, t1Index, t2Index, t3Index, t4Index, t5Index);
 //				visualizer.dehighlight(2);
 //				visualizer.dehighlight(6);
 //				visualizer.sleep();
@@ -265,31 +223,51 @@ public class LinKernighan implements TSPSolver{
 		return null; //This step failed
 	}
 	
-	short[] setX3Y3(Visualizer visualizer, Node[] nodes, short[] path, Edge x1, Edge y1, Edge x2, Edge y2){
-//		for(int t6Index = y2.toIndex - 1; t6Index > x2.fromIndex; t6Index --){
-			int t6Index = y2.toIndex - 1;
-			Edge x3 = new Edge(path, y2.toIndex, t6Index);
-			Edge y3 = new Edge(path, t6Index, x1.fromIndex); //Close the tour
+	short[] setX3Y3(Visualizer visualizer, Node[] nodes, short[] path, short t1Index, short t2Index, short t3Index, short t4Index, short t5Index){
+		short t6Index = (short) ((path.length + t5Index - 1)%path.length);
+//			Edge x3 = new Edge(path, y2.toIndex, t6Index);
+//			Edge y3 = new Edge(path, t6Index, x1.fromIndex); //Close the tour
 //			println("x3: " + x3);
 //			println("y3: " + y3);
-			visualizer.highlightLoose(2, path[x3.fromIndex], path[x3.toIndex]);
-			visualizer.highlightLoose(6, path[y3.fromIndex], path[y3.toIndex]);
-			visualizer.sleep();
-			double totalXDist = x1.dist(nodes) + x2.dist(nodes) + x3.dist(nodes);
-			double totalYDist = y1.dist(nodes) + y2.dist(nodes) + y3.dist(nodes);
-			boolean foundGoodTour = totalXDist > totalYDist;
-			if(foundGoodTour){
-				println("Found good tour 2");
-				short[] newPath = improvePathWithSwap(nodes, path, x1, y1, x2, y2, x3, y3);
-				visualizer.setPath(newPath);
-				num3Swaps ++;
-				return newPath;
-			}
-//		}
+//			visualizer.highlightLoose(2, path[x3.fromIndex], path[x3.toIndex]);
+//			visualizer.highlightLoose(6, path[y3.fromIndex], path[y3.toIndex]);
+//			visualizer.sleep();
+//			double totalXDist = nodes[path[t1Index]].distance(nodes[path[t2Index]]) +
+//					nodes[path[t3Index]].distance(nodes[path[t4Index]]) +
+//					nodes[path[t5Index]].distance(nodes[path[t6Index]]);
+	
+//			float totalXDist = distances[path[t1Index]][path[t2Index]] + 
+//					distances[path[t3Index]][path[t4Index]] +
+//					distances[path[t5Index]][path[t6Index]];
+	
+//			double totalYDist = nodes[path[t2Index]].distance(nodes[path[t3Index]]) +
+//					nodes[path[t4Index]].distance(nodes[path[t5Index]]) +
+//					nodes[path[t6Index]].distance(nodes[path[t1Index]]);
+	
+//			float totalYDist = distances[path[t2Index]][path[t3Index]] +
+//					distances[path[t4Index]][path[t5Index]] +
+//					distances[path[t6Index]][path[t1Index]];
+			
+//			double totalXDist = x1.dist(nodes) + x2.dist(nodes) + x3.dist(nodes);
+//			double totalYDist = y1.dist(nodes) + y2.dist(nodes) + y3.dist(nodes);
+//			boolean foundGoodTour = totalXDist > totalYDist;
+		
+		float x3Dist = distances[path[t6Index]][path[t5Index]];
+		float y3Dist =  distances[path[t6Index]][path[t1Index]];
+		
+		boolean foundGoodTour = x1Dist + x2Dist + x3Dist > y1Dist + y2Dist + y3Dist;
+		
+		if(foundGoodTour){
+//				println("Found good tour 2");
+			short[] newPath = improvePathWithSwap(nodes, path, t1Index, t2Index, t3Index, t4Index, t5Index, t6Index);
+//				visualizer.setPath(newPath);
+			num3Swaps ++;
+			return newPath;
+		}
 		return null;
 	}
 	
-	short[] improvePathWithSwap(Node[] nodes, short[] path, Edge x1, Edge y1, Edge x2, Edge y2, Edge x3, Edge y3){
+	short[] improvePathWithSwap(Node[] nodes, short[] path, short t1Index, short t2Index, short t3Index, short t4Index, short t5Index, short t6Index){
 //		println("improving with swap:");
 //		println("x1: " + x1);
 //		println("y1: " + y1);
@@ -300,16 +278,16 @@ public class LinKernighan implements TSPSolver{
 //		println("path: " + Arrays.toString(path));
 		short[] newPath = new short[path.length];
 		int dstInd = 0;
-		copySegment(path, newPath, x1.fromIndex, dstInd, 1, false); //copy first
+		copySegment(path, newPath, t1Index, dstInd, 1, false); //copy first
 		dstInd += 1;
-		int reverseLen = (path.length + y3.fromIndex - y1.toIndex) % path.length + 1;
-		copySegment(path, newPath, y1.toIndex, dstInd, reverseLen, true); //Copy reversed
+		int reverseLen = (path.length + t5Index - t3Index) % path.length + 1;
+		copySegment(path, newPath, t3Index, dstInd, reverseLen, true); //Copy reversed
 		dstInd += reverseLen;
-		int len = (path.length + y2.fromIndex - y1.fromIndex) % path.length + 1;
-		copySegment(path, newPath, y1.fromIndex, dstInd, len, false); //Copy 2nd last
+		int len = (path.length + t4Index - t2Index) % path.length + 1;
+		copySegment(path, newPath, t2Index, dstInd, len, false); //Copy 2nd last
 		dstInd += len;
-		int lastLen = (path.length + x1.fromIndex - y2.toIndex) % path.length + 1;
-		copySegment(path, newPath, y2.toIndex, dstInd, lastLen, false); //Copy last
+		int lastLen = (path.length + t1Index - t5Index) % path.length + 1;
+		copySegment(path, newPath, t5Index, dstInd, lastLen, false); //Copy last
 		println("new path (after swap): " + Arrays.toString(newPath));
 		return newPath;
 	}
@@ -356,61 +334,6 @@ public class LinKernighan implements TSPSolver{
 	
 	public String toString(){
 		return "Lin-Kernighan(" + LIMIT + ")";
-	}
-	
-	class Edge{
-		//NOTE:
-		//These indices denote the edge's position IN THE PATH, not in the nodes-array
-		int fromIndex;
-		int toIndex;
-		String str;
-		double sqDist;
-		double dist;
-		
-		//This object is not valid anymore if path is changed, since it's part of this specific path.
-		short[] path;
-		
-		Edge(short[] path, int fromIndex, int toIndex){
-			this.path = path;
-			this.fromIndex = (fromIndex + path.length)% path.length;
-			this.toIndex = (toIndex + path.length)% path.length;
-			
-		}
-		
-		private void setString(){
-			StringBuilder sb = new StringBuilder();
-			sb.append("[");
-			sb.append(path[this.fromIndex]);
-			sb.append(",");
-			sb.append(path[this.toIndex]);
-			sb.append(" (in path: ");
-			sb.append(this.fromIndex);
-			sb.append(",");
-			sb.append(this.toIndex);
-			str = sb.toString();
-		}
-		
-		double sqDist(Node[] nodes){
-			if(sqDist == 0){
-				sqDist = nodes[path[fromIndex]].sqDistance(nodes[path[toIndex]]);
-			}
-			return sqDist;
-		}
-		
-		double dist(Node[] nodes){
-			if(dist == 0){
-				double sqDist = sqDist(nodes);
-				dist = Math.sqrt(sqDist);
-			}
-			return dist;
-		}
-		public String toString(){
-//			System.err.println("[" + fromIndex + "," + toIndex + "]"); //TODO
-			if(str == null){
-				setString();
-			}
-			return str;
-		}
 	}
 	
 	private void println(Object str){

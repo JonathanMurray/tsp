@@ -17,17 +17,46 @@ public class Main {
 //	Linkernighan(75) and LinKernighan(85) gave 10 points in kattis
 	
 	
+	
+	
+	//After a few runs:    (this is with the new tIndex-opt)
+//	rand-1000nodes.txt:
+//	----------------
+//	Naive: [time: 8, length: 29622.0]
+//	Lin-Kernighan(25) with Naive start: [time: 20, length: 27410.0]
+//	Lin-Kernighan(30): [time: 130, length: 80837.0]
+//	Lin-Kernighan(150): [time: 315, length: 37018.0]
+//	Lin-Kernighan(300): [time: 409, length: 27041.0]
+//	Lin-Kernighan(500): [time: 701, length: 24699.0]
+	
+	
+	
+	//Running LK(350) on random1000 (w/o precomputed distances):
+//	Lin-Kernighan(350) with Naive start: [time: 211, length: 4.9408547E7]
+//	Lin-Kernighan(350) with Naive start: [time: 265, length: 4.9683391E7]
+//	Lin-Kernighan(350) with Naive start: [time: 306, length: 4.8690678E7]
+//	Lin-Kernighan(350) with Naive start: [time: 267, length: 5.0163892E7]
+//	Lin-Kernighan(350) with Naive start: [time: 227, length: 4.8341687E7]
+//	Lin-Kernighan(350) with Naive start: [time: 229, length: 4.8621453E7]
+//	Lin-Kernighan(350) with Naive start: [time: 193, length: 4.9008609E7]
+//	Lin-Kernighan(350) with Naive start: [time: 225, length: 4.8923659E7]
+//	Lin-Kernighan(350) with Naive start: [time: 205, length: 5.1121268E7]
+//	Lin-Kernighan(350) with Naive start: [time: 203, length: 5.144457E7]
+//	Lin-Kernighan(350) with Naive start: [time: 200, length: 4.9991479E7]
+//	Lin-Kernighan(350) with Naive start: [time: 277, length: 4.9601303E7]
+//	Lin-Kernighan(350) with Naive start: [time: 226, length: 4.9564248E7]
+	
+	
 	public static void main(String[] args) throws NumberFormatException, IOException {
-		kattis(new LinKernighan(85));
+//		kattis(new LinKernighan(150));
 //		testVisualization();
-//		compareSolvers();
-//		testRandom(Arrays.asList(new TSPSolver[]{
-//				new Naive(),
-////				new LinKernighanWithNaive(8),
-////				new LinKernighanWithNaive(30), 
-//				new LinKernighan(30)
-//				}), 1000);
+		compareSolvers();
 		
+//		for(int i = 0; i < 1000; i++){
+//			testRandom(Arrays.asList(new TSPSolver[]{
+//				new LinKernighan(350)
+//			}), 1000);	
+//		}
 	}
 	
 	private static void kattis(TSPSolver solver){
@@ -50,18 +79,11 @@ public class Main {
 		solvers.add(new Naive());
 //		solvers.add(new MST());
 //		solvers.add(new TwoOpt());
-//		solvers.add(new LinKernighanWithNaive(5));
-//		solvers.add(new LinKernighanWithNaive(10));
-		solvers.add(new LinKernighanWithNaive(25));
-//		solvers.add(new LinKernighanWithNaive(50));
-//		solvers.add(new LinKernighanWithNaive(100));
+//		solvers.add(new LinKernighanWithNaive(25));
+		solvers.add(new LinKernighan(30));
+		solvers.add(new LinKernighan(150));
 		solvers.add(new LinKernighan(300));
-		
-//		solvers.add(new LinKernighan(600));
-//		solvers.add(new LinKernighan(200));
-//		solvers.add(new LinKernighan(300));
-//		solvers.add(new LinKernighan(400));
-//		solvers.add(new LinKernighan(500));
+		solvers.add(new LinKernighan(500));
 		
 		
 		for(int i = 0; i < 50; i++){
@@ -72,7 +94,7 @@ public class Main {
 	private static void testRandom(Collection<TSPSolver> solvers, int numNodes){
 		for(TSPSolver solver : solvers){
 			Result result = Tester.test(solver, generateRandomNodes(numNodes));
-			System.out.println("Result for " + solver + ": " + result);
+			System.out.println(solver + ": " + result);
 		}
 		
 	}
