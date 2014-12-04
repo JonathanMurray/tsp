@@ -14,16 +14,20 @@ import tsp.VisualizerImpl.VisualizationParams;
 public class LinKernighanTest {
 
 	
-//	@Test
-//	public void testCopySegment(){
-//		short[] src =  new short[]{1,1,2,3,4,5,5,5,6,7,8};
-//		short[] dst =  new short[]{0,0,0,0,0,0,0,0,0,0,0};
-//		short[] dst2 = new short[]{0,0,0,0,0,0,0,0,0,0,0};
-//		LinKernighan.copySegment(src, dst, 3, 6, 3, false);
-//		LinKernighan.copySegment(src, dst2, 0, 8, 3, true);
-//		assert(Arrays.equals(dst, new short[]{0, 0, 0, 0, 0, 0, 3, 4, 5, 0, 0}));
-//		assert(Arrays.equals(dst2,  new short[]{0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1}));
-//	}
+	@Test
+	public void testCopySegment(){
+		short[] src =  new short[]{1,2,3,4,5,6,7,8,9,10,11};
+		short[] dst =  new short[]{0,0,0,0,0,0,0,0,0,0, 0};
+		short[] dst2 = new short[]{0,0,0,0,0,0,0,0,0,0, 0};
+		short[] dst3 = new short[]{0,0,0,0,0,0,0,0,0,0, 0};
+		LinKernighan lk = new LinKernighan(100);
+		lk.copySegment(src, dst, 3, 8, 5);
+		lk.copySegment(src, dst2, 8, 3, 5);
+		lk.copySegment(src, dst3, 5, 3, 2);
+		Assert.assertArrayEquals(dst, new short[]{7, 8, 0, 0, 0, 0, 0, 0, 4, 5, 6});
+		Assert.assertArrayEquals(dst2,  new short[]{0, 0, 0, 9, 10, 11, 1, 2, 0, 0, 0});
+		Assert.assertArrayEquals(dst3,  new short[]{0, 0, 0, 6, 7, 0, 0, 0, 0, 0, 0});
+	}
 //	
 //	@Test
 //	public void testImprovePathWithSwap(){
@@ -145,34 +149,34 @@ public class LinKernighanTest {
 //		Assert.assertArrayEquals(path, new short[]{3, 5, 0, 4, 2, 1, 6});
 //	}
 	
-	@Test
-	public void testLinKernighan4(){
-		
-		//nodes: [( -2 ; 1 ), ( 2 ; 1 ), ( -2 ; -1 ), ( 2 ; -1 ), ( 0 ; 2 ), ( 0 ; -2 ), ( 0,5 ; 0,5 )]
-
-		Node[] nodes = new Node[]{
-			new Node(-2, 1),
-			new Node(0, 2),
-			new Node(2, 1),
-			new Node(0.5, 0.5),
-			new Node(2, -1),
-			new Node(0, -2),
-			new Node(-2, -1)
-		};
-		List<Node> nodeList = Arrays.asList(nodes);
-		Collections.shuffle(nodeList);
-		nodes = nodeList.toArray(new Node[]{});
-		
-		Visualizer visualizer = new VisualizerImpl(
-				"LK",
-				new Dimension(500,500), 
-				new TSPInput(new Interval(-2, 2), nodes),
-				new VisualizationParams(0, 20)
-		);
-		
-		short[] path = new LinKernighan(500).solveTSP(nodes, visualizer);
-		System.out.println("pathlen: " + Node.lengthOfPath(path, nodes));
-		Assert.assertTrue(Node.lengthOfPath(path, nodes) <= 16.1);
-	}
+//	@Test
+//	public void testLinKernighan4(){
+//		
+//		//nodes: [( -2 ; 1 ), ( 2 ; 1 ), ( -2 ; -1 ), ( 2 ; -1 ), ( 0 ; 2 ), ( 0 ; -2 ), ( 0,5 ; 0,5 )]
+//
+//		Node[] nodes = new Node[]{
+//			new Node(-2, 1),
+//			new Node(0, 2),
+//			new Node(2, 1),
+//			new Node(0.5, 0.5),
+//			new Node(2, -1),
+//			new Node(0, -2),
+//			new Node(-2, -1)
+//		};
+//		List<Node> nodeList = Arrays.asList(nodes);
+//		Collections.shuffle(nodeList);
+//		nodes = nodeList.toArray(new Node[]{});
+//		
+//		Visualizer visualizer = new VisualizerImpl(
+//				"LK",
+//				new Dimension(500,500), 
+//				new TSPInput(new Interval(-2, 2), nodes),
+//				new VisualizationParams(0, 20)
+//		);
+//		
+//		short[] path = new LinKernighan(500).solveTSP(nodes, visualizer);
+//		System.out.println("pathlen: " + Node.lengthOfPath(path, nodes));
+//		Assert.assertTrue(Node.lengthOfPath(path, nodes) <= 16.1);
+//	}
 
 }

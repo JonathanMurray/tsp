@@ -294,17 +294,20 @@ public class LinKernighan implements TSPSolver{
 //		println("path: " + Arrays.toString(path));
 		short[] newPath = new short[path.length];
 		int dstInd = 0;
-		copySegment(path, newPath, t1Index, dstInd, 1, false); //copy first
+//		System.arraycopy(path, t1Index, newPath, dstInd, 1);
+		copySegment(path, newPath, t1Index, dstInd, 1); //copy first
 		dstInd += 1;
 		int reverseLen = (path.length + t5Index - t3Index) % path.length + 1;
-		copySegment(path, newPath, t3Index, dstInd, reverseLen, true); //Copy reversed
+		copySegmentReverse(path, newPath, t3Index, dstInd, reverseLen); //Copy reversed
 		dstInd += reverseLen;
 		int len = (path.length + t4Index - t2Index) % path.length + 1;
-		copySegment(path, newPath, t2Index, dstInd, len, false); //Copy 2nd last
+//		System.arraycopy(path, t2Index, newPath, dstInd, len);
+		copySegment(path, newPath, t2Index, dstInd, len); //Copy 2nd last
 		dstInd += len;
 		int lastLen = (path.length + t1Index - t5Index) % path.length + 1;
-		copySegment(path, newPath, t5Index, dstInd, lastLen, false); //Copy last
-		println("new path (after swap): " + Arrays.toString(newPath));
+//		System.arraycopy(path, t5Index, newPath, dstInd, lastLen);
+		copySegment(path, newPath, t5Index, dstInd, lastLen); //Copy last
+//		println("new path (after swap): " + Arrays.toString(newPath));
 		return newPath;
 	}
 
@@ -320,23 +323,54 @@ public class LinKernighan implements TSPSolver{
 	 *	copySegment(src, dst, 2, 6, 3, true);
 	 *  // dst == [0, 0, 0, 0, 0, 0, 4, 3, 2, 0]
 	 */
-	void copySegment(short[] src, short[] dst, int srcStart, int dstStart, int len, boolean reverseTheSegment){
+	void copySegmentReverse(short[] src, short[] dst, int srcStart, int dstStart, int len){
+		
+		int srcInd = (srcStart + len - 1 + src.length) % src.length;
+		int dstInd = dstStart;
+		for(int offset = 0; offset < len; offset++){
+			dst[dstInd] = src[srcInd];
+			srcInd --;
+			if(srcInd < 0){
+				srcInd  = src.length - 1;
+			}
+			dstInd ++;
+			if(dstInd >= src.length){
+				dstInd = 0;
+			}
+		}
+	}
+	
+	void copySegment(short[] src, short[] dst, int srcStart, int dstStart, int len){
 //		println("-----------");
 //		println("src: " + Arrays.toString(src));
 //		println("dst: " + Arrays.toString(dst));
 //		println("srcstart: " + srcStart);
 //		println("len: " + len);
 //		println("copying " + len + " elements from src-" + srcStart + " to dst-" + dstStart);
-		for(int offset = 0; offset < len; offset++){
-			short val;
-//			println("offset: " + offset);
-			if(reverseTheSegment){
-				val = src[(srcStart + len - 1 - offset + src.length) % src.length];
+		
+		int arrayLen = src.length;
+		
+		if(srcStart > dstStart){
+			if(srcStart + len <= arrayLen){
+				System.arraycopy(src, srcStart, dst, dstStart, len); //Normal copy
 			}else{
-				val = src[(srcStart + offset + src.length) % src.length];
+				int lenUntilEnd = arrayLen - srcStart;
+				System.arraycopy(src, srcStart, dst, dstStart, lenUntilEnd); //First copy until end
+				int remaining = len - lenUntilEnd;
+				copySegment(src, dst, 0, dstStart + lenUntilEnd, remaining); //Then copy from beginning
 			}
-			dst[(dstStart + offset + dst.length) % dst.length] = val;
+		}else{
+			if(dstStart + len <= arrayLen){
+				System.arraycopy(src, srcStart, dst, dstStart, len); //Normal copy
+			}else{
+				int lenUntilEnd = arrayLen - dstStart;
+				System.arraycopy(src, srcStart, dst, dstStart, lenUntilEnd); //First copy until end
+				int remaining = len - lenUntilEnd;
+				copySegment(src, dst, (srcStart + lenUntilEnd)%arrayLen, 0, remaining); //Then copy from beginning
+			}
 		}
+		
+		
 //		println("dst: " + Arrays.toString(dst));
 	}
 
