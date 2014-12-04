@@ -2,7 +2,8 @@ package tsp;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -12,16 +13,21 @@ import tsp.VisualizerImpl.VisualizationParams;
  
 @SuppressWarnings("unused")
 public class Main {
-	 
-	private static final short NUM_NODES = 1000;
-	private static final int MIN_COORD = 0;
-	private static final int MAX_COORD = 1000;
-	private static final Dimension WINDOW_SIZE = new Dimension(600,600);
+	
+//	Linkernighan(75) and LinKernighan(85) gave 10 points in kattis
+	
 	
 	public static void main(String[] args) throws NumberFormatException, IOException {
-//		kattis(new TwoOpt());
+		kattis(new LinKernighan(85));
 //		testVisualization();
-		compareSolvers();
+//		compareSolvers();
+//		testRandom(Arrays.asList(new TSPSolver[]{
+//				new Naive(),
+////				new LinKernighanWithNaive(8),
+////				new LinKernighanWithNaive(30), 
+//				new LinKernighan(30)
+//				}), 1000);
+		
 	}
 	
 	private static void kattis(TSPSolver solver){
@@ -42,19 +48,51 @@ public class Main {
 		
 		List<TSPSolver> solvers = new ArrayList<TSPSolver>();
 		solvers.add(new Naive());
-		solvers.add(new MST());
-		solvers.add(new TwoOpt());
-		solvers.add(new LinKernighan(200));
+//		solvers.add(new MST());
+//		solvers.add(new TwoOpt());
+//		solvers.add(new LinKernighanWithNaive(5));
+//		solvers.add(new LinKernighanWithNaive(10));
+		solvers.add(new LinKernighanWithNaive(25));
+//		solvers.add(new LinKernighanWithNaive(50));
+//		solvers.add(new LinKernighanWithNaive(100));
 		solvers.add(new LinKernighan(300));
-		solvers.add(new LinKernighan(400));
-		solvers.add(new LinKernighan(500));
-		solvers.add(new LinKernighan(600));
-		solvers.add(new LinKernighan(700));
-
-		Tester.compareSolvers(solvers, testFiles, 1);
+		
+//		solvers.add(new LinKernighan(600));
+//		solvers.add(new LinKernighan(200));
+//		solvers.add(new LinKernighan(300));
+//		solvers.add(new LinKernighan(400));
+//		solvers.add(new LinKernighan(500));
+		
+		
+		for(int i = 0; i < 50; i++){
+			Tester.compareSolvers(solvers, testFiles, 1);	
+		}
+	}
+	
+	private static void testRandom(Collection<TSPSolver> solvers, int numNodes){
+		for(TSPSolver solver : solvers){
+			Result result = Tester.test(solver, generateRandomNodes(numNodes));
+			System.out.println("Result for " + solver + ": " + result);
+		}
+		
+	}
+	
+	private static Node[] generateRandomNodes(int numNodes){
+		Random r = new Random();
+		Node[] nodes = new Node[numNodes];
+		for(int i = 0; i <  numNodes; i++){
+			double x =  r.nextDouble() * 2 * 1000000 - 1000000;
+			double y =  r.nextDouble() * 2 * 1000000 - 1000000;
+			nodes[i] = new Node(x, y);
+		}
+		return nodes;
 	}
 	
 	private static void testVisualization(){
+		final short NUM_NODES = 1000;
+	    final int MIN_COORD = 0;
+		final int MAX_COORD = 1000;
+		final Dimension WINDOW_SIZE = new Dimension(600,600);
 		Random r = new Random();
 		Interval coordInterval = new Interval(MIN_COORD, MAX_COORD);
 		Node[] nodes = new Node[NUM_NODES];

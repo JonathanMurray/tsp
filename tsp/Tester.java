@@ -53,8 +53,8 @@ public class Tester {
 	 */
 	public static Result test(TSPSolver solver, Node[] nodes){
 		Visualizer visualizer = new VisualizerMockup();
-		if(solver.toString().equals("Lin-Kernighan")){
-//			visualizer = new VisualizerImpl("LK" , new Dimension(500,500), new TSPInput(new Interval(0, 1000), nodes), new VisualizationParams(0, 0));
+		if(solver.toString().contains("Lin-Kernighan")){
+//			visualizer = new VisualizerImpl("LK" , new Dimension(500,500), new TSPInput(new Interval(0, 1000), nodes), new VisualizationParams(0, 500));
 		} //TODO
 		long time = System.currentTimeMillis();
 		short[] path = solver.solveTSP(nodes, visualizer);
@@ -85,7 +85,12 @@ public class Tester {
 		}
 		
 		public String toString(){
-			String length = new DecimalFormat("#0.00").format(totalPathLength);
+			String length;
+			if(totalPathLength > 1000){
+				length = "" + totalPathLength;
+			}else{
+				length = new DecimalFormat("#0.00").format(totalPathLength);
+			}
 			return "[time: " + computationTime + ", length: " + length + "]";
 		}
 	}
