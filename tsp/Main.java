@@ -15,20 +15,26 @@ import tsp.VisualizerImpl.VisualizationParams;
 public class Main {
 
 	//LK-150 gave 15.05 in kattis  (4/12 15:53)
+	//LK-175 gave 20.68 in kattis (4/12 17:02)
+	//LK-250 gave 23.44 in kattis (4/12 17:02)
+	//LK-400 gave 26.59 in kattis (4/12 17:04)
+	//LK-600 gave 26.75 in kattis (4/12 17:05)
+	//LK-1000 gave 28.07 in kattis (4/12 17:07)
 	
 	public static void main(String[] args) throws NumberFormatException, IOException {
-//		kattis(new LinKernighan(200));
+		kattis(new LinKernighanWithNaive(1000));
 //		testVisualization();
 //		compareSolvers();
 		
-		for(int i = 0; i < 1000; i++){
-			testRandom(Arrays.asList(new TSPSolver[]{
-//					new Naive(),
-//					new LinKernighan(85),
-					new LinKernighan(150),
-//					new LinKernighan(500)
-			}), 1000);	
-		}
+//		for(int i = 0; i < 1000; i++){
+//			testRandom(Arrays.asList(new TSPSolver[]{
+////					new Naive(),
+////					new TwoOpt(),
+////					new MST(),
+////					new LinKernighanWithNaive(600),
+//					new LinKernighan(600)
+//			}), 1000);	
+//		}
 	}
 	
 	private static void kattis(TSPSolver solver){
