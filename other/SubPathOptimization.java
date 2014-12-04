@@ -1,4 +1,10 @@
-package tsp;
+package other;
+
+import tsp.Naive;
+import tsp.Node;
+import tsp.TSPSolver;
+import tsp.Visualizer;
+import tsp.VisualizerMockup;
 
 /**
  * Point with this is to quickly create a (not so great) solution, and then

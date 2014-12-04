@@ -8,8 +8,8 @@ import java.util.LinkedList;
 
 // Object for handling distances between nodes a to b
 public class Dist implements Comparable<Dist> {
-	short a;
-	short b;
+	public short a;
+	public short b;
 	double sqDistance;
 
 	public Dist(short a, short b, double sqDistance) {

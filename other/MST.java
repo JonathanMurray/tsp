@@ -1,8 +1,15 @@
-package tsp;
+package other;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
+
+import tsp.Dist;
+import tsp.Node;
+import tsp.Reader;
+import tsp.TSPSolver;
+import tsp.Visualizer;
+import tsp.VisualizerMockup;
 
 public class MST implements TSPSolver {
 

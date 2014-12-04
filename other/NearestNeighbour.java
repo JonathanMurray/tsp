@@ -1,6 +1,12 @@
-package tsp;
+package other;
 
 import java.util.LinkedList;
+
+import tsp.Dist;
+import tsp.Node;
+import tsp.TSPSolver;
+import tsp.Visualizer;
+import tsp.VisualizerMockup;
 
 /**
  * Just as good as Naive, but slower........ 

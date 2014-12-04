@@ -3,6 +3,7 @@ package tsp;
 
 
 
+
 public class TwoOpt implements TSPSolver{
 
 	@Override
