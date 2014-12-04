@@ -33,6 +33,9 @@ public class Node {
 		}
 		HashSet<Short> seen = new HashSet<Short>();
 		for(short node : path){
+			if(node >= path.length){
+				throw new RuntimeException(node + " is too big. path length is " + path.length);
+			}
 			if(seen.contains(node)){
 				throw new RuntimeException(node + " occurs more than once in the path!");
 			}
