@@ -58,4 +58,9 @@ public class NearestNeighbour implements TSPSolver{
 		return "NearestNeighbour";
 	}
 
+	@Override
+	public short[] solveTSP(Node[] nodes, Visualizer visualizer, short[] path) {
+		throw new RuntimeException();
+	}
+
 }

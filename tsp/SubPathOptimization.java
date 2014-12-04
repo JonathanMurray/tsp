@@ -45,4 +45,9 @@ public class SubPathOptimization implements TSPSolver {
 		return "Naive+AntColony";
 	}
 
+	@Override
+	public short[] solveTSP(Node[] nodes, Visualizer visualizer, short[] path) {
+		throw new RuntimeException();
+	}
+
 }

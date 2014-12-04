@@ -106,4 +106,9 @@ public class TwoOpt implements TSPSolver{
 	public String toString() {
 		return "2-Opt";
 	}
+
+	@Override
+	public short[] solveTSP(Node[] nodes, Visualizer visualizer, short[] path) {
+		throw new RuntimeException();
+	}
 }

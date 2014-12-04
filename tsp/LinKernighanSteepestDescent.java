@@ -1,24 +1,17 @@
 package tsp;
 
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Random;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
-//Lin-Kernighan(600): [time: 796, length: 4.9292827E7]
-//Lin-Kernighan(600): [time: 748, length: 4.9141101E7]
-//Lin-Kernighan(600): [time: 349, length: 5.0018158E7]
-//Lin-Kernighan(600): [time: 513, length: 5.0474575E7]
-//Lin-Kernighan(600): [time: 531, length: 5.0780137E7]
 
-public class LinKernighanSimAnneal implements TSPSolver{
+
+public class LinKernighanSteepestDescent implements TSPSolver{
 
 	private final int LIMIT;
 	private float[][] distances;
 	private int num2Swaps = 0;
 	private int num3Swaps = 0;
-	
-	private Random random = new Random();
 	
 	private float x1Dist;
 	private float y1Dist;
@@ -29,31 +22,8 @@ public class LinKernighanSimAnneal implements TSPSolver{
 	private Node[] nodes;
 	private Visualizer visualizer;
 	
-	private float temperature;
-	private float tempMultiplier;
-	private final float minTemp = 0.0000005f;
-	
-	private String str;
-	
-	public LinKernighanSimAnneal(int limit, float temperature, float tempMultiplier) {
+	public LinKernighanSteepestDescent(int limit) {
 		this.LIMIT = limit;
-		this.temperature = temperature;
-		this.tempMultiplier = tempMultiplier;
-		str = "LK-SA(" + limit + ", " + temperature + ", " + tempMultiplier + ")";
-	}
-	
-	
-	private boolean simAnneal(double xDist, double yDist){
-		if(xDist > yDist){
-			return true;
-		}
-		double chance = Math.exp((xDist - yDist)/xDist/temperature);
-		boolean ok = random.nextFloat() < chance; 
-//		if(chance > 0.1){
-//			System.out.println(temperature + ":  " + xDist + " --> " + yDist + ": P=" + chance + ", OK: " + ok);
-//		}
-		
-		return ok;
 	}
 
 	@Override
@@ -90,81 +60,56 @@ public class LinKernighanSimAnneal implements TSPSolver{
 		println("nodes: " + Arrays.toString(nodes));
 //		System.out.println("start path: " + Arrays.toString(path));
 //		System.out.println("length: " + Node.lengthOfPath(path, nodes));
-		while(temperature > minTemp){
-			short t1Index = (short) random.nextInt(path.length);
-//			System.out.println("temp: " + temperature);
-			boolean equilibrium = false;
-			int i = 0;
-			double pastLength = 0;
-			int numChanges = 0;
-			while(!equilibrium && i < LIMIT){
-//				visualizer.highlightLoose(0, path[x1.fromIndex], path[x1.toIndex]);
+		for(short t1Index = 0; t1Index < path.length; t1Index++){
+//			visualizer.highlightLoose(0, path[x1.fromIndex], path[x1.toIndex]);
+//			visualizer.sleep();
+			short[] newPath = setY1(t1Index, mod(t1Index + 1));
+//			visualizer.dehighlight(4);
+			if(newPath != null && Arrays.equals(path, newPath)){
+//				println("\nFound new path: " + Arrays.toString(newPath) + "\n");
+//				System.out.println("found new path");
+				path = newPath; //Next step success, but we'll continue improving the path
+//				visualizer.setPath(path); //necessary I think, path is just a pointer.
 //				visualizer.sleep();
-				short[] newPath = setY1(t1Index, mod(t1Index + 1));
-//				visualizer.dehighlight(4);
-				if(newPath != null){
-//					println("\nFound new path: " + Arrays.toString(newPath) + "\n");
-					path = newPath; //Next step success, but we'll continue improving the path
-					if(numChanges % 5 == 0){
-						double length = Node.lengthOfPath(path, nodes);
-						if(pastLength != 0 && length > pastLength * 0.95){
-							equilibrium = true;
-						}
-						pastLength = length;
-					}
-					numChanges ++;
-//					visualizer.setPath(path); //necessary I think, path is just a pointer.
-//					visualizer.sleep();
-					t1Index = (short) random.nextInt(path.length);
-					i = -1;
-					System.out.print(".");
-				}
-				t1Index = mod(t1Index + 1);
-				i++;
+				t1Index = -1; //so loop is restarted with t1 = 0
 			}
-			if(numChanges < 4){
-				break;
-			}
-			System.out.println();
-			temperature *= tempMultiplier;
-			System.out.println(temperature);
+			
 		}
-		
-		println("final path: " + Arrays.toString(path));
-		visualizer.dehighlight();
+//		println("final path: " + Arrays.toString(path));
+//		visualizer.dehighlight();
 		return path;
 	}
 	
-	
-	
 	short[] setY1(short t1Index, short t2Index){
+		int numTries = 0;
 		short pathT2Index = path[t2Index];
 		x1Dist = dist(pathT2Index, path[t1Index]);
 		
-		short stopBefore = mod(t1Index - 2);
-		short start = mod(t2Index + 2);
-		int numLoops = Math.min(mod(stopBefore - start), LIMIT);
-		short t3Index = mod(start + random.nextInt(numLoops));
+		TreeMap<Double, Short> bestNeighbourStates = new TreeMap<Double, Short>();
 		
-		for(int i = 0; i < numLoops; i++){
+		short stopBefore = mod(t1Index - 2);
+		for(short t3Index = mod(t2Index + 2); t3Index != stopBefore && numTries < LIMIT; t3Index = mod(t3Index + 1)){
 //			visualizer.highlightLoose(4, path[y1.fromIndex], path[y1.toIndex]);
 //			visualizer.sleep();
 			y1Dist = dist(pathT2Index,path[t3Index]);
-//			boolean xIsBigger = x1Dist > y1Dist;
-			if(simAnneal(x1Dist, y1Dist)){
-				short[] newPath = setX2(t1Index, t2Index, t3Index); 
-//				visualizer.dehighlight(1);
-//				visualizer.sleep();
-				if(newPath != null){
-//					visualizer.setPath(newPath);
-					return newPath; //Next step success
-				}
+			boolean xIsBigger = x1Dist > y1Dist;
+			if(xIsBigger){
+				bestNeighbourStates.put(new Double(x1Dist - y1Dist), new Short(t3Index));
 			}
-			t3Index = mod(t3Index + 1);
-			if(t3Index == stopBefore){
-				t3Index = start;
+			numTries ++;
+		}
+		
+		for(Entry<Double, Short> e : bestNeighbourStates.descendingMap().entrySet()){
+			short t3Index = e.getValue();
+			short[] newPath = setX2(t1Index, t2Index, t3Index); 
+//			visualizer.dehighlight(1);
+//			visualizer.sleep();
+			if(newPath != null){
+//				visualizer.setPath(newPath);
+				return newPath; //Next step success
 			}
 		}
+		
 		return null; //This step failed
 	}
 	
@@ -174,8 +119,11 @@ public class LinKernighanSimAnneal implements TSPSolver{
 //		visualizer.sleep();
 		x2Dist = dist(path[t4Index],path[t3Index]);
 		float possibleY2Dist = dist(path[t4Index], path[t1Index]);
-//		boolean foundGoodTour = x1Dist + x2Dist > y1Dist + possibleY2Dist;
-		if(simAnneal(x1Dist + x2Dist, y1Dist + possibleY2Dist)){
+		boolean foundGoodTour = x1Dist + x2Dist > y1Dist + possibleY2Dist;
+		
+		foundGoodTour = false; //TODO Forbid early stop
+		
+		if(foundGoodTour){
 			if(findFirstOccurence(t2Index, t4Index, path) == t2Index){
 				TwoOpt.swap(path, t2Index, t4Index);
 			}else{
@@ -208,36 +156,37 @@ public class LinKernighanSimAnneal implements TSPSolver{
 	}
 	
 	short[] setY2(short t1Index, short t2Index, short t3Index, short t4Index){
+		int numTries = 0;
+
 		short stopBefore = mod(t1Index - 1);
 		short pathT4Index = path[t4Index];
 		
-		short start = mod(t3Index + 2);
-		int numLoops = Math.min(mod(stopBefore - start), LIMIT);
-		if(numLoops == 0){
-			return null;
-		}
-		short t5Index = mod(start + random.nextInt(numLoops));
+		TreeMap<Double, Short> bestNeighbourStates = new TreeMap<Double, Short>();
 		
-		for(int i = 0; i < numLoops; i++){
+		for(short t5Index = mod(t3Index + 2); t5Index != stopBefore && numTries < LIMIT; t5Index = mod(t5Index + 1)){ 
 //			visualizer.highlightLoose(5, path[y2.fromIndex], path[y2.toIndex]);
 //			visualizer.sleep();
 			y2Dist = dist(pathT4Index,path[t5Index]);
-//			boolean xIsBigger = x1Dist + x2Dist > y1Dist + y2Dist;
-			if(simAnneal(x1Dist + x2Dist, y1Dist + y2Dist)){
-				short[] newPath = setX3Y3(t1Index, t2Index, t3Index, t4Index, t5Index);
-//				visualizer.dehighlight(2);
-//				visualizer.dehighlight(6);
-//				visualizer.sleep();
-				if(newPath != null){
-//					visualizer.setPath(newPath);
-					return newPath; //Next step success
-				}
+			boolean xIsBigger = x1Dist + x2Dist > y1Dist + y2Dist;
+			if(xIsBigger){
+				bestNeighbourStates.put(new Double(x1Dist + x2Dist - y1Dist - y2Dist), new Short(t5Index));
 			}
-			t5Index = mod(t5Index + 1);
-			if(t5Index == stopBefore){
-				t5Index = start;
+			numTries ++;
+		}
+		
+		for(Entry<Double, Short> e : bestNeighbourStates.descendingMap().entrySet()){
+			short t5Index = e.getValue();
+			short[] newPath = setX3Y3(t1Index, t2Index, t3Index, t4Index, t5Index);
+//			visualizer.dehighlight(2);
+//			visualizer.dehighlight(6);
+//			visualizer.sleep();
+			if(newPath != null){
+//				visualizer.setPath(newPath);
+				return newPath; //Next step success
 			}
 		}
+		
+		
 		return null; //This step failed
 	}
 	
@@ -248,8 +197,8 @@ public class LinKernighanSimAnneal implements TSPSolver{
 //		visualizer.sleep();
 		float x3Dist = dist(path[t6Index], path[t5Index]);
 		float y3Dist = dist(path[t6Index], path[t1Index]);
-//		boolean foundGoodTour = x1Dist + x2Dist + x3Dist > y1Dist + y2Dist + y3Dist;
-		if(simAnneal(x1Dist + x2Dist + x3Dist, y1Dist + y2Dist + y3Dist)){
+		boolean foundGoodTour = x1Dist + x2Dist + x3Dist > y1Dist + y2Dist + y3Dist;
+		if(foundGoodTour){
 			short[] newPath = improvePathWithSwap(nodes, path, t1Index, t2Index, t3Index, t4Index, t5Index, t6Index);
 //			visualizer.setPath(newPath);
 			num3Swaps ++;
@@ -351,7 +300,7 @@ public class LinKernighanSimAnneal implements TSPSolver{
 	}
 	
 	public String toString(){
-		return str;
+		return "Lin-Kernighan-SD(" + LIMIT + ")";
 	}
 	
 	private void println(Object str){

@@ -230,4 +230,9 @@ public class MST implements TSPSolver {
 		return "MST";
 	}
 
+	@Override
+	public short[] solveTSP(Node[] nodes, Visualizer visualizer, short[] path) {
+		throw new RuntimeException();
+	}
+
 }

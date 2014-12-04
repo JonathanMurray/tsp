@@ -76,4 +76,9 @@ public class Naive implements TSPSolver {
 		return "Naive";
 	}
 
+	@Override
+	public short[] solveTSP(Node[] nodes, Visualizer visualizer, short[] path) {
+		throw new RuntimeException();
+	}
+
 }

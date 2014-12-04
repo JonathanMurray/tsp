@@ -22,19 +22,31 @@ public class Main {
 	//LK-1000 gave 28.07 in kattis (4/12 17:07)
 	
 	public static void main(String[] args) throws NumberFormatException, IOException {
-		kattis(new LinKernighanWithNaive(1000));
+		kattis(new LinKernighanSimAnneal(500, 5f, 0.98f));
 //		testVisualization();
 //		compareSolvers();
 		
-//		for(int i = 0; i < 1000; i++){
-//			testRandom(Arrays.asList(new TSPSolver[]{
-////					new Naive(),
-////					new TwoOpt(),
-////					new MST(),
-////					new LinKernighanWithNaive(600),
-//					new LinKernighan(600)
-//			}), 1000);	
+//		compareOnRandomNodes();
+	}
+	
+	private static void compareOnRandomNodes(){
+		List<TSPSolver> solvers = new ArrayList<TSPSolver>();
+		solvers.add(new Naive());
+		solvers.add(new LinKernighan(1000));
+		solvers.add(new CombinedWithNaive(new LinKernighan(1000)));
+		solvers.add(new LinKernighanSimAnneal(500, 5f, 0.98f));
+//		solvers.add(new CombinedWithNaive(new LinKernighanSimAnneal(50, 3f, 0.99f)));
+//		for(float temp : new float[]{1f, 2f, 3f}){
+//			for(float mult : new float[]{ 0.99f, 0.992f, 0.994f, 0.996f, 0.998f}){
+//				for(int limit : new int[]{1000}){
+//					solvers.add(new CombinedWithNaive(new LinKernighanSimAnneal(limit, temp, mult)));
+//				}
+//				
+//			}
 //		}
+		for(int i = 0; i < 1; i++){
+			testRandom(solvers, 1000);	
+		}
 	}
 	
 	private static void kattis(TSPSolver solver){
@@ -70,8 +82,9 @@ public class Main {
 	}
 	
 	private static void testRandom(Collection<TSPSolver> solvers, int numNodes){
+		Node[] nodes = generateRandomNodes(numNodes);
 		for(TSPSolver solver : solvers){
-			Result result = Tester.test(solver, generateRandomNodes(numNodes));
+			Result result = Tester.test(solver, nodes);
 			System.out.println(solver + ": " + result);
 		}
 		

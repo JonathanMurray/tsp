@@ -20,8 +20,15 @@ public class LinKernighan implements TSPSolver{
 	private Node[] nodes;
 	private Visualizer visualizer;
 	
+	private boolean forbidStopAt2;
+	
 	public LinKernighan(int limit) {
 		this.LIMIT = limit;
+	}
+	
+	public LinKernighan(int limit, boolean forbidStopAt2) {
+		this.LIMIT = limit;
+		this.forbidStopAt2 = forbidStopAt2;
 	}
 
 	@Override
@@ -108,6 +115,14 @@ public class LinKernighan implements TSPSolver{
 		x2Dist = dist(path[t4Index],path[t3Index]);
 		float possibleY2Dist = dist(path[t4Index], path[t1Index]);
 		boolean foundGoodTour = x1Dist + x2Dist > y1Dist + possibleY2Dist;
+		
+		//Try to forbid these early stops:
+		if(forbidStopAt2){
+			foundGoodTour = false; //TODO
+		}
+		
+		
+		
 		if(foundGoodTour){
 			if(findFirstOccurence(t2Index, t4Index, path) == t2Index){
 				TwoOpt.swap(path, t2Index, t4Index);
@@ -275,7 +290,7 @@ public class LinKernighan implements TSPSolver{
 	}
 	
 	public String toString(){
-		return "Lin-Kernighan(" + LIMIT + ")";
+		return "LK(" + LIMIT + ")";
 	}
 	
 	private void println(Object str){

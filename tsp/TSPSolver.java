@@ -19,4 +19,6 @@ public interface TSPSolver {
 	 * @return A path (a list of node-indices)
 	 */
 	short[] solveTSP(Node[] nodes, Visualizer visualizer);
+	
+	short[] solveTSP(Node[] nodes, Visualizer visualizer, short[] path);
 }
