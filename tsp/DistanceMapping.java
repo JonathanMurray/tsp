@@ -10,7 +10,6 @@ public class DistanceMapping {
 	 * @return
 	 */
 	public static float[][] getDistances(Node[] nodes){
-//		System.out.println("dist");
 		float[][] distances = new float[nodes.length][];
 		for(int i = 0; i < nodes.length; i++){
 			distances[i] = new float[nodes.length];
@@ -18,7 +17,6 @@ public class DistanceMapping {
 				distances[i][j] = (float)nodes[i].distance(nodes[j]);
 			}
 		}
-//		System.out.println("done");
 		return distances;
 	}
 }

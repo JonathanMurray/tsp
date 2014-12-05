@@ -10,8 +10,6 @@ public class LinKernighanSteepestDescent implements TSPSolver{
 
 	private final int LIMIT;
 	private float[][] distances;
-	private int num2Swaps = 0;
-	private int num3Swaps = 0;
 	
 	private float x1Dist;
 	private float y1Dist;
@@ -20,7 +18,6 @@ public class LinKernighanSteepestDescent implements TSPSolver{
 	
 	private short[] path;
 	private Node[] nodes;
-	private Visualizer visualizer;
 	
 	public LinKernighanSteepestDescent(int limit) {
 		this.LIMIT = limit;
@@ -43,11 +40,8 @@ public class LinKernighanSteepestDescent implements TSPSolver{
 		visualizer.setPath(path);
 		visualizer.sleep();
 		this.nodes = nodes;
-		this.visualizer = visualizer;
 		this.path = path;
 		short[] newPath = setX1();
-//		System.out.println(num2Swaps + " 2-swaps");
-//		System.out.println(num3Swaps + " 3-swaps");
 		return newPath;
 	}
 	
@@ -57,13 +51,11 @@ public class LinKernighanSteepestDescent implements TSPSolver{
 	}
 	
 	short[] setX1(){
-		println("nodes: " + Arrays.toString(nodes));
 		TreeMap<Double, NeighbourState> bestNeighbourStates = new TreeMap<Double, NeighbourState>();
 		int limit = 150;
 		while(true){
 			bestNeighbourStates.clear();
 			for(short t1Index = 0; t1Index < path.length; t1Index++){
-//				System.out.println(t1Index);
 				short t2Index = mod(t1Index + 1);
 				short pathT2Index = path[t2Index];
 				x1Dist = dist(pathT2Index, path[t1Index]);
@@ -102,13 +94,11 @@ public class LinKernighanSteepestDescent implements TSPSolver{
 			}
 			if(bestNeighbourStates.isEmpty()){ //no more improvements
 				limit *= 2;
-//				System.out.println(limit);
 				if(limit > 1000){
 					break;
 				}
 			}
 			for(Entry<Double, NeighbourState> e : bestNeighbourStates.descendingMap().entrySet()){
-//				System.out.println(e.getKey());
 				NeighbourState state = e.getValue();
 				short t1Index = state.t1Index;
 				short t2Index = mod(t1Index + 1);
@@ -181,13 +171,6 @@ public class LinKernighanSteepestDescent implements TSPSolver{
 	}
 	
 	void copySegment(short[] src, short[] dst, int srcStart, int dstStart, int len){
-//		println("-----------");
-//		println("src: " + Arrays.toString(src));
-//		println("dst: " + Arrays.toString(dst));
-//		println("srcstart: " + srcStart);
-//		println("len: " + len);
-//		println("copying " + len + " elements from src-" + srcStart + " to dst-" + dstStart);
-		
 		int arrayLen = src.length;
 		if(srcStart > dstStart){
 			if(srcStart + len <= arrayLen){
@@ -208,7 +191,6 @@ public class LinKernighanSteepestDescent implements TSPSolver{
 				copySegment(src, dst, mod(srcStart + lenUntilEnd), 0, remaining); //Then copy from beginning
 			}
 		}
-//		println("dst: " + Arrays.toString(dst));
 	}
 
 	short[] generateStartPath(int numNodes){
@@ -222,11 +204,7 @@ public class LinKernighanSteepestDescent implements TSPSolver{
 	public String toString(){
 		return "Lin-Kernighan-SD(" + LIMIT + ")";
 	}
-	
-	private void println(Object str){
-//		System.out.println(str);
-	}
-	
+
 	/**
 	 * NOTE: You have to call like dist(path[i], path[j]), NOT dist(i, j).
 	 * @param fromIndex

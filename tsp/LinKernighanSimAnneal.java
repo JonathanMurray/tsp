@@ -5,18 +5,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
-//Lin-Kernighan(600): [time: 796, length: 4.9292827E7]
-//Lin-Kernighan(600): [time: 748, length: 4.9141101E7]
-//Lin-Kernighan(600): [time: 349, length: 5.0018158E7]
-//Lin-Kernighan(600): [time: 513, length: 5.0474575E7]
-//Lin-Kernighan(600): [time: 531, length: 5.0780137E7]
-
 public class LinKernighanSimAnneal implements TSPSolver{
 
 	private final int LIMIT;
 	private float[][] distances;
-	private int num2Swaps = 0;
-	private int num3Swaps = 0;
 	
 	private Random random = new Random();
 	
@@ -50,10 +42,6 @@ public class LinKernighanSimAnneal implements TSPSolver{
 		}
 		double chance = Math.exp((xDist - yDist)/xDist/temperature);
 		boolean ok = random.nextFloat() < chance; 
-//		if(chance > 0.1){
-//			System.out.println(temperature + ":  " + xDist + " --> " + yDist + ": P=" + chance + ", OK: " + ok);
-//		}
-		
 		return ok;
 	}
 
@@ -77,8 +65,6 @@ public class LinKernighanSimAnneal implements TSPSolver{
 		this.visualizer = visualizer;
 		this.path = path;
 		short[] newPath = setX1();
-//		System.out.println(num2Swaps + " 2-swaps");
-//		System.out.println(num3Swaps + " 3-swaps");
 		return newPath;
 	}
 	
@@ -88,12 +74,8 @@ public class LinKernighanSimAnneal implements TSPSolver{
 	}
 	
 	short[] setX1(){
-		println("nodes: " + Arrays.toString(nodes));
-//		System.out.println("start path: " + Arrays.toString(path));
-//		System.out.println("length: " + Node.lengthOfPath(path, nodes));
 		while(temperature > minTemp){
 			short t1Index = (short) random.nextInt(path.length);
-//			System.out.println("temp: " + temperature);
 			boolean equilibrium = false;
 			int i = 0;
 			double pastLength = 0;
@@ -104,7 +86,6 @@ public class LinKernighanSimAnneal implements TSPSolver{
 				short[] newPath = setY1(t1Index, mod(t1Index + 1));
 //				visualizer.dehighlight(4);
 				if(newPath != null){
-//					println("\nFound new path: " + Arrays.toString(newPath) + "\n");
 					path = newPath; //Next step success, but we'll continue improving the path
 					if(numChanges % 5 == 0){
 						double length = Node.lengthOfPath(path, nodes);
@@ -118,7 +99,6 @@ public class LinKernighanSimAnneal implements TSPSolver{
 //					visualizer.sleep();
 					t1Index = (short) random.nextInt(path.length);
 					i = -1;
-//					System.out.print(".");
 				}
 				t1Index = mod(t1Index + 1);
 				i++;
@@ -126,12 +106,9 @@ public class LinKernighanSimAnneal implements TSPSolver{
 			if(numChanges < 4){
 				break;
 			}
-//			System.out.println();
 			temperature *= tempMultiplier;
-//			System.out.println(temperature);
 		}
 		
-		println("final path: " + Arrays.toString(path));
 		visualizer.dehighlight();
 		return path;
 	}
@@ -151,7 +128,6 @@ public class LinKernighanSimAnneal implements TSPSolver{
 //			visualizer.highlightLoose(4, path[y1.fromIndex], path[y1.toIndex]);
 //			visualizer.sleep();
 			y1Dist = dist(pathT2Index,path[t3Index]);
-//			boolean xIsBigger = x1Dist > y1Dist;
 			if(simAnneal(x1Dist, y1Dist)){
 				short[] newPath = setX2(t1Index, t2Index, t3Index); 
 //				visualizer.dehighlight(1);
@@ -175,14 +151,12 @@ public class LinKernighanSimAnneal implements TSPSolver{
 //		visualizer.sleep();
 		x2Dist = dist(path[t4Index],path[t3Index]);
 		float possibleY2Dist = dist(path[t4Index], path[t1Index]);
-//		boolean foundGoodTour = x1Dist + x2Dist > y1Dist + possibleY2Dist;
 		if(simAnneal(x1Dist + x2Dist, y1Dist + possibleY2Dist)){
 			if(findFirstOccurence(t2Index, t4Index, path) == t2Index){
 				TwoOpt.swap(path, t2Index, t4Index);
 			}else{
 				TwoOpt.swap(path, t3Index, t1Index); //TODO
 			}
-			num2Swaps ++;
 			return path; //Found a good 2-swap [SUCCESS]
 		}else{
 			short[] newPath = setY2(t1Index, t2Index, t3Index, t4Index);
@@ -223,7 +197,6 @@ public class LinKernighanSimAnneal implements TSPSolver{
 //			visualizer.highlightLoose(5, path[y2.fromIndex], path[y2.toIndex]);
 //			visualizer.sleep();
 			y2Dist = dist(pathT4Index,path[t5Index]);
-//			boolean xIsBigger = x1Dist + x2Dist > y1Dist + y2Dist;
 			if(simAnneal(x1Dist + x2Dist, y1Dist + y2Dist)){
 				short[] newPath = setX3Y3(t1Index, t2Index, t3Index, t4Index, t5Index);
 //				visualizer.dehighlight(2);
@@ -249,25 +222,15 @@ public class LinKernighanSimAnneal implements TSPSolver{
 //		visualizer.sleep();
 		float x3Dist = dist(path[t6Index], path[t5Index]);
 		float y3Dist = dist(path[t6Index], path[t1Index]);
-//		boolean foundGoodTour = x1Dist + x2Dist + x3Dist > y1Dist + y2Dist + y3Dist;
 		if(simAnneal(x1Dist + x2Dist + x3Dist, y1Dist + y2Dist + y3Dist)){
 			short[] newPath = improvePathWithSwap(nodes, path, t1Index, t2Index, t3Index, t4Index, t5Index, t6Index);
 //			visualizer.setPath(newPath);
-			num3Swaps ++;
 			return newPath;
 		}
 		return null;
 	}
 	
 	short[] improvePathWithSwap(Node[] nodes, short[] path, short t1Index, short t2Index, short t3Index, short t4Index, short t5Index, short t6Index){
-//		println("improving with swap:");
-//		println("x1: " + x1);
-//		println("y1: " + y1);
-//		println("x2: " + x2);
-//		println("y2: " + y2);
-//		println("x3: " + x3);
-//		println("y3: " + y3);
-//		println("path: " + Arrays.toString(path));
 		short[] newPath = new short[path.length];
 		int dstInd = 0;
 		copySegment(path, newPath, t1Index, dstInd, 1); //copy first
@@ -280,7 +243,6 @@ public class LinKernighanSimAnneal implements TSPSolver{
 		dstInd += len;
 		int lastLen = mod(t1Index - t5Index) + 1;
 		copySegment(path, newPath, t5Index, dstInd, lastLen); //Copy last
-//		println("new path (after swap): " + Arrays.toString(newPath));
 		return newPath;
 	}
 
@@ -313,13 +275,6 @@ public class LinKernighanSimAnneal implements TSPSolver{
 	}
 	
 	void copySegment(short[] src, short[] dst, int srcStart, int dstStart, int len){
-//		println("-----------");
-//		println("src: " + Arrays.toString(src));
-//		println("dst: " + Arrays.toString(dst));
-//		println("srcstart: " + srcStart);
-//		println("len: " + len);
-//		println("copying " + len + " elements from src-" + srcStart + " to dst-" + dstStart);
-		
 		int arrayLen = src.length;
 		if(srcStart > dstStart){
 			if(srcStart + len <= arrayLen){
@@ -340,7 +295,6 @@ public class LinKernighanSimAnneal implements TSPSolver{
 				copySegment(src, dst, mod(srcStart + lenUntilEnd), 0, remaining); //Then copy from beginning
 			}
 		}
-//		println("dst: " + Arrays.toString(dst));
 	}
 
 	short[] generateStartPath(int numNodes){
@@ -353,10 +307,6 @@ public class LinKernighanSimAnneal implements TSPSolver{
 	
 	public String toString(){
 		return str;
-	}
-	
-	private void println(Object str){
-//		System.out.println(str);
 	}
 	
 	/**

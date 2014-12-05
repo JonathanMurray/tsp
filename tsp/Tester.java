@@ -1,13 +1,9 @@
 package tsp;
 
-import java.awt.Dimension;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
-
-import tsp.VisualizerImpl.TSPInput;
-import tsp.VisualizerImpl.VisualizationParams;
  
 public class Tester {
 	
@@ -53,9 +49,6 @@ public class Tester {
 	 */
 	public static Result test(TSPSolver solver, Node[] nodes){
 		Visualizer visualizer = new VisualizerMockup();
-		if(solver.toString().contains("Lin-Kernighan")){
-//			visualizer = new VisualizerImpl("LK" , new Dimension(500,500), new TSPInput(new Interval(0, 1000), nodes), new VisualizationParams(0, 500));
-		} //TODO
 		long time = System.currentTimeMillis();
 		short[] path = solver.solveTSP(nodes, visualizer);
 		time = System.currentTimeMillis() - time;

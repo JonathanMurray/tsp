@@ -1,15 +1,7 @@
 package tsp;
 
-import java.awt.Dimension;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
-
-import tsp.VisualizerImpl.TSPInput;
-import tsp.VisualizerImpl.VisualizationParams;
 
 public class LinKernighanTest {
 
@@ -28,7 +20,7 @@ public class LinKernighanTest {
 		Assert.assertArrayEquals(dst2,  new short[]{0, 0, 0, 9, 10, 11, 1, 2, 0, 0, 0});
 		Assert.assertArrayEquals(dst3,  new short[]{0, 0, 0, 6, 7, 0, 0, 0, 0, 0, 0});
 	}
-//	
+	
 //	@Test
 //	public void testImprovePathWithSwap(){
 //		Node[] nodes = new Node[]{

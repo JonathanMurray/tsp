@@ -8,8 +8,6 @@ public class LinKernighan implements TSPSolver{
 
 	private final int LIMIT;
 	private float[][] distances;
-	private int num2Swaps = 0;
-	private int num3Swaps = 0;
 	
 	private float x1Dist;
 	private float y1Dist;
@@ -51,8 +49,6 @@ public class LinKernighan implements TSPSolver{
 		this.visualizer = visualizer;
 		this.path = path;
 		short[] newPath = setX1();
-//		System.out.println(num2Swaps + " 2-swaps");
-//		System.out.println(num3Swaps + " 3-swaps");
 		return newPath;
 	}
 	
@@ -62,23 +58,18 @@ public class LinKernighan implements TSPSolver{
 	}
 	
 	short[] setX1(){
-		println("nodes: " + Arrays.toString(nodes));
-//		System.out.println("start path: " + Arrays.toString(path));
-//		System.out.println("length: " + Node.lengthOfPath(path, nodes));
 		for(short t1Index = 0; t1Index < path.length; t1Index++){
 //			visualizer.highlightLoose(0, path[x1.fromIndex], path[x1.toIndex]);
 //			visualizer.sleep();
 			short[] newPath = setY1(t1Index, mod(t1Index + 1));
 //			visualizer.dehighlight(4);
 			if(newPath != null){
-//				println("\nFound new path: " + Arrays.toString(newPath) + "\n");
 				path = newPath; //Next step success, but we'll continue improving the path
-//				visualizer.setPath(path); //necessary I think, path is just a pointer.
+//				visualizer.setPath(path); 
 //				visualizer.sleep();
 				t1Index = -1; //so loop is restarted with t1 = 0
 			}
 		}
-		println("final path: " + Arrays.toString(path));
 		visualizer.dehighlight();
 		return path;
 	}
@@ -129,7 +120,6 @@ public class LinKernighan implements TSPSolver{
 			}else{
 				TwoOpt.swap(path, t3Index, t1Index); //TODO
 			}
-			num2Swaps ++;
 			return path; //Found a good 2-swap [SUCCESS]
 		}else{
 			short[] newPath = setY2(t1Index, t2Index, t3Index, t4Index);
@@ -191,21 +181,12 @@ public class LinKernighan implements TSPSolver{
 		if(foundGoodTour){
 			short[] newPath = improvePathWithSwap(nodes, path, t1Index, t2Index, t3Index, t4Index, t5Index, t6Index);
 //			visualizer.setPath(newPath);
-			num3Swaps ++;
 			return newPath;
 		}
 		return null;
 	}
 	
 	short[] improvePathWithSwap(Node[] nodes, short[] path, short t1Index, short t2Index, short t3Index, short t4Index, short t5Index, short t6Index){
-//		println("improving with swap:");
-//		println("x1: " + x1);
-//		println("y1: " + y1);
-//		println("x2: " + x2);
-//		println("y2: " + y2);
-//		println("x3: " + x3);
-//		println("y3: " + y3);
-//		println("path: " + Arrays.toString(path));
 		short[] newPath = new short[path.length];
 		int dstInd = 0;
 		copySegment(path, newPath, t1Index, dstInd, 1); //copy first
@@ -218,7 +199,6 @@ public class LinKernighan implements TSPSolver{
 		dstInd += len;
 		int lastLen = mod(t1Index - t5Index) + 1;
 		copySegment(path, newPath, t5Index, dstInd, lastLen); //Copy last
-//		println("new path (after swap): " + Arrays.toString(newPath));
 		return newPath;
 	}
 
@@ -251,13 +231,6 @@ public class LinKernighan implements TSPSolver{
 	}
 	
 	void copySegment(short[] src, short[] dst, int srcStart, int dstStart, int len){
-//		println("-----------");
-//		println("src: " + Arrays.toString(src));
-//		println("dst: " + Arrays.toString(dst));
-//		println("srcstart: " + srcStart);
-//		println("len: " + len);
-//		println("copying " + len + " elements from src-" + srcStart + " to dst-" + dstStart);
-		
 		int arrayLen = src.length;
 		if(srcStart > dstStart){
 			if(srcStart + len <= arrayLen){
@@ -278,7 +251,6 @@ public class LinKernighan implements TSPSolver{
 				copySegment(src, dst, mod(srcStart + lenUntilEnd), 0, remaining); //Then copy from beginning
 			}
 		}
-//		println("dst: " + Arrays.toString(dst));
 	}
 
 	short[] generateStartPath(int numNodes){
@@ -291,10 +263,6 @@ public class LinKernighan implements TSPSolver{
 	
 	public String toString(){
 		return "LK(" + LIMIT + ")";
-	}
-	
-	private void println(Object str){
-//		System.out.println(str);
 	}
 	
 	/**

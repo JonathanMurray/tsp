@@ -99,10 +99,6 @@ public class VisualizerImpl extends JFrame implements Visualizer{
 			Color c = g.getColor();
 			g.setColor(highlightColors.get(colorIndex));
 			Interval between = highlighted.get(colorIndex);
-//			if(Math.abs(between.max() - between.min()) > 1){
-//				System.err.println("bad highlight color(" + colorIndex + "): " + between.min() + " <--> " + between.max());
-//				for(int i = 0; i < 15; i++){sleep();}//TODO
-//			}
 			paintSubPath(g, between.min(), between.max(), false);
 			g.setColor(c);
 		}

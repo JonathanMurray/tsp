@@ -20,5 +20,12 @@ public interface TSPSolver {
 	 */
 	short[] solveTSP(Node[] nodes, Visualizer visualizer);
 	
+	/**
+	 * Like the others, but start with a specified path. Not implemented by all subclasses.
+	 * @param nodes
+	 * @param visualizer
+	 * @param path
+	 * @return
+	 */
 	short[] solveTSP(Node[] nodes, Visualizer visualizer, short[] path);
 }

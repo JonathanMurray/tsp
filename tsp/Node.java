@@ -58,7 +58,6 @@ public class Node {
 	}
 
 	public String toString() {
-//		return doubleStr(x) + " " + doubleStr(y);
 		return "( " + doubleStr(x) + " ; " + doubleStr(y) + " )";
 	}
 

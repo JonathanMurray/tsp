@@ -10,7 +10,6 @@ package tsp;
  *
  */
 public interface Visualizer {
-	//Empty default methods to get a "mockup" for free
 	void repaint();
 	
 	void sleep();

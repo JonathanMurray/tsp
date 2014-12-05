@@ -45,20 +45,6 @@ public class Main {
 		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0.05f)));
 		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0.1f)));
 		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0.2f)));
-//		solvers.add(new LinKernighanSteepestDescent(1000));
-//		solvers.add(new LinKernighan(1000));
-//		solvers.add(new CombinedWithNaive(new LinKernighan(1000)));
-		
-//		solvers.add(new LinKernighanSimAnneal(300, 2f, 0.978f, 0.000003f));
-//		solvers.add(new CombinedWithNaive(new LinKernighanSimAnneal(50, 3f, 0.99f)));
-//		for(float temp : new float[]{1f, 2f, 3f}){
-//			for(float mult : new float[]{ 0.99f, 0.992f, 0.994f, 0.996f, 0.998f}){
-//				for(int limit : new int[]{1000}){
-//					solvers.add(new CombinedWithNaive(new LinKernighanSimAnneal(limit, temp, mult)));
-//				}
-//				
-//			}
-//		}
 		for(int i = 0; i < 1; i++){
 			testRandom(solvers, 1000);	
 		}
@@ -74,18 +60,10 @@ public class Main {
 	
 	private static void compareSolvers() throws NumberFormatException, IOException{
 		List<String> testFiles = new ArrayList<String>();
-//		testFiles.add("g1.txt");
-//		testFiles.add("rand-50nodes.txt");
-//		testFiles.add("rand-150nodes.txt");
-//		testFiles.add("rand-500nodes.txt");
 		testFiles.add("rand-1000nodes.txt");
 		
 		List<TSPSolver> solvers = new ArrayList<TSPSolver>();
 		solvers.add(new Naive());
-//		solvers.add(new MST());
-//		solvers.add(new TwoOpt());
-//		solvers.add(new LinKernighanWithNaive(25));
-//		solvers.add(new LinKernighan(30));
 		solvers.add(new LinKernighan(85));
 		solvers.add(new LinKernighan(300));
 		solvers.add(new LinKernighan(500));
