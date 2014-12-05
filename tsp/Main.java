@@ -28,26 +28,20 @@ public class Main {
 	//LK-1000 limited descent(70) p(0.1) gave 29.92 (5/12 13.29)
 	
 	public static void main(String[] args) throws NumberFormatException, IOException {
-		kattis(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 70, 0.05f)));
+//		kattis(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 70, 0.05f)));
 //		testVisualization();
 //		compareSolvers();
-		
-//		compareOnRandomNodes();
+		compareOnRandomNodes();
 	}
 	
 	private static void compareOnRandomNodes(){
 		List<TSPSolver> solvers = new ArrayList<TSPSolver>();
 		solvers.add(new Naive());
 		solvers.add(new CombinedWithNaive(new LinKernighan(1000)));
-		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0f)));
-		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0.01f)));
 		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0.02f)));
-		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0.05f)));
-		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0.1f)));
-		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0.2f)));
-		for(int i = 0; i < 1; i++){
-			testRandom(solvers, 1000);	
-		}
+		solvers.add(new CombinedWithNaive(new LinKernighanSimAnneal(100, 2f, 0.95f, 0.0001f)));
+		solvers.add(new CombinedWithNaive(new LinKernighanSteepestDescent(500)));
+		testRandom(solvers, 1000);	
 	}
 	
 	private static void kattis(TSPSolver solver){

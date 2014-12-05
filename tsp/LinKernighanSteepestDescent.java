@@ -1,31 +1,18 @@
 package tsp;
 
-import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
 
 
-public class LinKernighanSteepestDescent implements TSPSolver{
+public class LinKernighanSteepestDescent extends LinKernighan{
 
-	private final int LIMIT;
-	private float[][] distances;
-	
-	private float x1Dist;
-	private float y1Dist;
-	private float x2Dist;
-	private float y2Dist;
-	
-	private short[] path;
-	private Node[] nodes;
-	
 	public LinKernighanSteepestDescent(int limit) {
-		this.LIMIT = limit;
+		super(limit);
 	}
 
 	@Override
 	public short[] solveTSP(Node[] nodes) {
-		
 		return solveTSP(nodes, new VisualizerMockup());
 	}
 	
@@ -41,16 +28,11 @@ public class LinKernighanSteepestDescent implements TSPSolver{
 		visualizer.sleep();
 		this.nodes = nodes;
 		this.path = path;
-		short[] newPath = setX1();
+		short[] newPath = solve();
 		return newPath;
 	}
 	
-	//(mod path.length)
-	private short mod(int i){
-		return (short) ((i + path.length) % path.length);
-	}
-	
-	short[] setX1(){
+	short[] solve(){
 		TreeMap<Double, NeighbourState> bestNeighbourStates = new TreeMap<Double, NeighbourState>();
 		int limit = 150;
 		while(true){
@@ -125,93 +107,8 @@ public class LinKernighanSteepestDescent implements TSPSolver{
 			this.t5Index = t5Index;
 		}
 	}
-	
-	short[] improvePathWithSwap(Node[] nodes, short[] path, short t1Index, short t2Index, short t3Index, short t4Index, short t5Index, short t6Index){
-		short[] newPath = new short[path.length];
-		int dstInd = 0;
-		copySegment(path, newPath, t1Index, dstInd, 1); //copy first
-		dstInd += 1;
-		int reverseLen = mod(t5Index - t3Index) + 1;
-		copySegmentReverse(path, newPath, t3Index, dstInd, reverseLen); //Copy reversed
-		dstInd += reverseLen;
-		int len = mod(t4Index - t2Index) + 1;
-		copySegment(path, newPath, t2Index, dstInd, len); //Copy 2nd last
-		dstInd += len;
-		int lastLen = mod(t1Index - t5Index) + 1;
-		copySegment(path, newPath, t5Index, dstInd, lastLen); //Copy last
-		return newPath;
-	}
 
-	/**
-	 * Copy from src to dst. 
-	 * Copied: Elements srcStart, srcStart + 1, ..., srcStart + len - 1.
-	 * To: dstStart, dstStart + 1, ..., dstStart + len - 1.
-	 * If reverse, they will be put in reversed order, but all indices are the same.
-	 * 
-	 * Example:
-	 *  short[] src = new short[]{0,1,2,3,4,5,6,7,8,9};
-	 *	short[] dst = new short[10];
-	 *	copySegment(src, dst, 2, 6, 3, true);
-	 *  // dst == [0, 0, 0, 0, 0, 0, 4, 3, 2, 0]
-	 */
-	void copySegmentReverse(short[] src, short[] dst, int srcStart, int dstStart, int len){
-		int srcInd = mod(srcStart + len - 1);
-		int dstInd = dstStart;
-		for(int offset = 0; offset < len; offset++){
-			dst[dstInd] = src[srcInd];
-			srcInd --;
-			if(srcInd < 0){
-				srcInd  = src.length - 1;
-			}
-			dstInd ++;
-			if(dstInd >= src.length){
-				dstInd = 0;
-			}
-		}
-	}
-	
-	void copySegment(short[] src, short[] dst, int srcStart, int dstStart, int len){
-		int arrayLen = src.length;
-		if(srcStart > dstStart){
-			if(srcStart + len <= arrayLen){
-				System.arraycopy(src, srcStart, dst, dstStart, len); //Normal copy
-			}else{
-				int lenUntilEnd = arrayLen - srcStart;
-				System.arraycopy(src, srcStart, dst, dstStart, lenUntilEnd); //First copy until end
-				int remaining = len - lenUntilEnd;
-				copySegment(src, dst, 0, dstStart + lenUntilEnd, remaining); //Then copy from beginning
-			}
-		}else{
-			if(dstStart + len <= arrayLen){
-				System.arraycopy(src, srcStart, dst, dstStart, len); //Normal copy
-			}else{
-				int lenUntilEnd = arrayLen - dstStart;
-				System.arraycopy(src, srcStart, dst, dstStart, lenUntilEnd); //First copy until end
-				int remaining = len - lenUntilEnd;
-				copySegment(src, dst, mod(srcStart + lenUntilEnd), 0, remaining); //Then copy from beginning
-			}
-		}
-	}
-
-	short[] generateStartPath(int numNodes){
-		short[] path = new short[numNodes];
-		for(short i = 0; i < numNodes; i++){
-			path[i] = i;
-		}
-		return path;
-	}
-	
 	public String toString(){
 		return "Lin-Kernighan-SD(" + LIMIT + ")";
-	}
-
-	/**
-	 * NOTE: You have to call like dist(path[i], path[j]), NOT dist(i, j).
-	 * @param fromIndex
-	 * @param toIndex
-	 * @return
-	 */
-	private float dist(int fromIndex, int toIndex){
-		return distances[fromIndex][toIndex];
 	}
 }
