@@ -58,164 +58,85 @@ public class LinKernighanSteepestDescent implements TSPSolver{
 	
 	short[] setX1(){
 		println("nodes: " + Arrays.toString(nodes));
-//		System.out.println("start path: " + Arrays.toString(path));
-//		System.out.println("length: " + Node.lengthOfPath(path, nodes));
-		for(short t1Index = 0; t1Index < path.length; t1Index++){
-//			visualizer.highlightLoose(0, path[x1.fromIndex], path[x1.toIndex]);
-//			visualizer.sleep();
-			short[] newPath = setY1(t1Index, mod(t1Index + 1));
-//			visualizer.dehighlight(4);
-			if(newPath != null && Arrays.equals(path, newPath)){
-//				println("\nFound new path: " + Arrays.toString(newPath) + "\n");
-//				System.out.println("found new path");
-				path = newPath; //Next step success, but we'll continue improving the path
-//				visualizer.setPath(path); //necessary I think, path is just a pointer.
-//				visualizer.sleep();
-				t1Index = -1; //so loop is restarted with t1 = 0
+		TreeMap<Double, NeighbourState> bestNeighbourStates = new TreeMap<Double, NeighbourState>();
+		int limit = 150;
+		while(true){
+			bestNeighbourStates.clear();
+			for(short t1Index = 0; t1Index < path.length; t1Index++){
+//				System.out.println(t1Index);
+				short t2Index = mod(t1Index + 1);
+				short pathT2Index = path[t2Index];
+				x1Dist = dist(pathT2Index, path[t1Index]);
+				short t3StopBefore = mod(t1Index - 2);
+				int i2 = 0;
+				for(short t3Index = mod(t2Index + 2); t3Index != t3StopBefore && i2 < limit; t3Index = mod(t3Index + 1)){
+					y1Dist = dist(pathT2Index,path[t3Index]);
+					if(x1Dist < y1Dist){
+						i2++;
+						continue;
+					}
+					short t4Index = mod(t3Index - 1);
+					x2Dist = dist(path[t4Index],path[t3Index]);
+					float possibleY2Dist = dist(path[t4Index], path[t1Index]);
+					if(x1Dist + x2Dist < y1Dist + possibleY2Dist){
+						i2++;
+						continue;
+					}
+					
+					short pathT4Index = path[t4Index];
+					short t5StopBefore = mod(t1Index - 1);
+					int i3 = 0;
+					for(short t5Index = mod(t3Index + 2); t5Index != t5StopBefore && i3 < limit; t5Index = mod(t5Index + 1)){ 
+						y2Dist = dist(pathT4Index,path[t5Index]);
+						short t6Index = mod(t5Index - 1);
+						float x3Dist = dist(path[t6Index], path[t5Index]);
+						float y3Dist = dist(path[t6Index], path[t1Index]);
+						boolean foundGoodTour = x1Dist + x2Dist + x3Dist > y1Dist + y2Dist + y3Dist;
+						if(foundGoodTour){
+							bestNeighbourStates.put(new Double(x1Dist + x2Dist + x3Dist - y1Dist - y2Dist - y3Dist), new NeighbourState(t1Index, t3Index, t5Index));
+						}
+						i3++;
+					}
+					i2++;
+				}
 			}
-			
+			if(bestNeighbourStates.isEmpty()){ //no more improvements
+				limit *= 2;
+//				System.out.println(limit);
+				if(limit > 1000){
+					break;
+				}
+			}
+			for(Entry<Double, NeighbourState> e : bestNeighbourStates.descendingMap().entrySet()){
+//				System.out.println(e.getKey());
+				NeighbourState state = e.getValue();
+				short t1Index = state.t1Index;
+				short t2Index = mod(t1Index + 1);
+				short t3Index = state.t3Index;
+				short t4Index = mod(t3Index - 1);
+				short t5Index = state.t5Index;
+				short t6Index = mod(t5Index - 1);
+				short[] newPath = improvePathWithSwap(nodes, path, t1Index, t2Index, t3Index, t4Index, t5Index, t6Index);
+				path = newPath;
+				break;
+			}
 		}
-//		println("final path: " + Arrays.toString(path));
-//		visualizer.dehighlight();
+		
 		return path;
 	}
 	
-	short[] setY1(short t1Index, short t2Index){
-		int numTries = 0;
-		short pathT2Index = path[t2Index];
-		x1Dist = dist(pathT2Index, path[t1Index]);
-		
-		TreeMap<Double, Short> bestNeighbourStates = new TreeMap<Double, Short>();
-		
-		short stopBefore = mod(t1Index - 2);
-		for(short t3Index = mod(t2Index + 2); t3Index != stopBefore && numTries < LIMIT; t3Index = mod(t3Index + 1)){
-//			visualizer.highlightLoose(4, path[y1.fromIndex], path[y1.toIndex]);
-//			visualizer.sleep();
-			y1Dist = dist(pathT2Index,path[t3Index]);
-			boolean xIsBigger = x1Dist > y1Dist;
-			if(xIsBigger){
-				bestNeighbourStates.put(new Double(x1Dist - y1Dist), new Short(t3Index));
-			}
-			numTries ++;
+	private class NeighbourState{
+		short t1Index;
+		short t3Index;
+		short t5Index;
+		public NeighbourState(short t1Index, short t3Index, short t5Index) {
+			this.t1Index = t1Index;
+			this.t3Index = t3Index;
+			this.t5Index = t5Index;
 		}
-		
-		for(Entry<Double, Short> e : bestNeighbourStates.descendingMap().entrySet()){
-			short t3Index = e.getValue();
-			short[] newPath = setX2(t1Index, t2Index, t3Index); 
-//			visualizer.dehighlight(1);
-//			visualizer.sleep();
-			if(newPath != null){
-//				visualizer.setPath(newPath);
-				return newPath; //Next step success
-			}
-		}
-		
-		return null; //This step failed
-	}
-	
-	short[] setX2(short t1Index, short t2Index, short t3Index){
-		short t4Index = mod(t3Index - 1);
-//		visualizer.highlightLoose(1, path[x2.fromIndex], path[x2.toIndex]);
-//		visualizer.sleep();
-		x2Dist = dist(path[t4Index],path[t3Index]);
-		float possibleY2Dist = dist(path[t4Index], path[t1Index]);
-		boolean foundGoodTour = x1Dist + x2Dist > y1Dist + possibleY2Dist;
-		
-		foundGoodTour = false; //TODO Forbid early stop
-		
-		if(foundGoodTour){
-			if(findFirstOccurence(t2Index, t4Index, path) == t2Index){
-				TwoOpt.swap(path, t2Index, t4Index);
-			}else{
-				TwoOpt.swap(path, t3Index, t1Index); //TODO
-			}
-			num2Swaps ++;
-			return path; //Found a good 2-swap [SUCCESS]
-		}else{
-			short[] newPath = setY2(t1Index, t2Index, t3Index, t4Index);
-//			visualizer.dehighlight(5);
-//			visualizer.sleep();
-			if(newPath != null){
-//				visualizer.setPath(newPath);
-				return newPath; //Next step success
-			}
-		}
-		return null; //This step failed
-	}
-	
-	private int findFirstOccurence(int a, int b, short[] array){
-		for(short x : array){
-			if(x == a){
-				return a;
-			}
-			if(x == b){
-				return b;
-			}
-		}
-		throw new RuntimeException("Neither " + a + " or " + b + " was found in " + Arrays.toString(array));
-	}
-	
-	short[] setY2(short t1Index, short t2Index, short t3Index, short t4Index){
-		int numTries = 0;
-
-		short stopBefore = mod(t1Index - 1);
-		short pathT4Index = path[t4Index];
-		
-		TreeMap<Double, Short> bestNeighbourStates = new TreeMap<Double, Short>();
-		
-		for(short t5Index = mod(t3Index + 2); t5Index != stopBefore && numTries < LIMIT; t5Index = mod(t5Index + 1)){ 
-//			visualizer.highlightLoose(5, path[y2.fromIndex], path[y2.toIndex]);
-//			visualizer.sleep();
-			y2Dist = dist(pathT4Index,path[t5Index]);
-			boolean xIsBigger = x1Dist + x2Dist > y1Dist + y2Dist;
-			if(xIsBigger){
-				bestNeighbourStates.put(new Double(x1Dist + x2Dist - y1Dist - y2Dist), new Short(t5Index));
-			}
-			numTries ++;
-		}
-		
-		for(Entry<Double, Short> e : bestNeighbourStates.descendingMap().entrySet()){
-			short t5Index = e.getValue();
-			short[] newPath = setX3Y3(t1Index, t2Index, t3Index, t4Index, t5Index);
-//			visualizer.dehighlight(2);
-//			visualizer.dehighlight(6);
-//			visualizer.sleep();
-			if(newPath != null){
-//				visualizer.setPath(newPath);
-				return newPath; //Next step success
-			}
-		}
-		
-		
-		return null; //This step failed
-	}
-	
-	short[] setX3Y3(short t1Index, short t2Index, short t3Index, short t4Index, short t5Index){
-		short t6Index = mod(t5Index - 1);
-//		visualizer.highlightLoose(2, path[x3.fromIndex], path[x3.toIndex]);
-//		visualizer.highlightLoose(6, path[y3.fromIndex], path[y3.toIndex]);
-//		visualizer.sleep();
-		float x3Dist = dist(path[t6Index], path[t5Index]);
-		float y3Dist = dist(path[t6Index], path[t1Index]);
-		boolean foundGoodTour = x1Dist + x2Dist + x3Dist > y1Dist + y2Dist + y3Dist;
-		if(foundGoodTour){
-			short[] newPath = improvePathWithSwap(nodes, path, t1Index, t2Index, t3Index, t4Index, t5Index, t6Index);
-//			visualizer.setPath(newPath);
-			num3Swaps ++;
-			return newPath;
-		}
-		return null;
 	}
 	
 	short[] improvePathWithSwap(Node[] nodes, short[] path, short t1Index, short t2Index, short t3Index, short t4Index, short t5Index, short t6Index){
-//		println("improving with swap:");
-//		println("x1: " + x1);
-//		println("y1: " + y1);
-//		println("x2: " + x2);
-//		println("y2: " + y2);
-//		println("x3: " + x3);
-//		println("y3: " + y3);
-//		println("path: " + Arrays.toString(path));
 		short[] newPath = new short[path.length];
 		int dstInd = 0;
 		copySegment(path, newPath, t1Index, dstInd, 1); //copy first
@@ -228,7 +149,6 @@ public class LinKernighanSteepestDescent implements TSPSolver{
 		dstInd += len;
 		int lastLen = mod(t1Index - t5Index) + 1;
 		copySegment(path, newPath, t5Index, dstInd, lastLen); //Copy last
-//		println("new path (after swap): " + Arrays.toString(newPath));
 		return newPath;
 	}
 

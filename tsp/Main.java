@@ -19,10 +19,16 @@ public class Main {
 	//LK-250 gave 23.44 in kattis (4/12 17:02)
 	//LK-400 gave 26.59 in kattis (4/12 17:04)
 	//LK-600 gave 26.75 in kattis (4/12 17:05)
-	//LK-1000 gave 28.07 in kattis (4/12 17:07)
+	//LK-1000 gave 28.07 in kattis (4/12 17:07) (all the above with naive I think)
+	//LK-1000 steepest descent with naive gave only 8.39 (4/12 22:13)
+	//LK-1000 limited descent(35) gave 28.92 (5/12 13:09)
+	//LK-1000 limited descent(70) gave 29.29 (5/12 13:12)
+	//LK-1000 limited descent(120) gave 28.67 (5/12 13:15)
+	//LK-1000 limited descent(120) p(0.1) gave 29.83 (5/12 13.27)
+	//LK-1000 limited descent(70) p(0.1) gave 29.92 (5/12 13.29)
 	
 	public static void main(String[] args) throws NumberFormatException, IOException {
-		kattis(new LinKernighanSimAnneal(500, 5f, 0.98f));
+		kattis(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 70, 0.05f)));
 //		testVisualization();
 //		compareSolvers();
 		
@@ -32,9 +38,18 @@ public class Main {
 	private static void compareOnRandomNodes(){
 		List<TSPSolver> solvers = new ArrayList<TSPSolver>();
 		solvers.add(new Naive());
-		solvers.add(new LinKernighan(1000));
 		solvers.add(new CombinedWithNaive(new LinKernighan(1000)));
-		solvers.add(new LinKernighanSimAnneal(500, 5f, 0.98f));
+		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0f)));
+		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0.01f)));
+		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0.02f)));
+		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0.05f)));
+		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0.1f)));
+		solvers.add(new CombinedWithNaive(new LinKernighanLimitedDescent(1000, 50, 0.2f)));
+//		solvers.add(new LinKernighanSteepestDescent(1000));
+//		solvers.add(new LinKernighan(1000));
+//		solvers.add(new CombinedWithNaive(new LinKernighan(1000)));
+		
+//		solvers.add(new LinKernighanSimAnneal(300, 2f, 0.978f, 0.000003f));
 //		solvers.add(new CombinedWithNaive(new LinKernighanSimAnneal(50, 3f, 0.99f)));
 //		for(float temp : new float[]{1f, 2f, 3f}){
 //			for(float mult : new float[]{ 0.99f, 0.992f, 0.994f, 0.996f, 0.998f}){
@@ -84,7 +99,7 @@ public class Main {
 	private static void testRandom(Collection<TSPSolver> solvers, int numNodes){
 		Node[] nodes = generateRandomNodes(numNodes);
 		for(TSPSolver solver : solvers){
-			Result result = Tester.test(solver, nodes);
+			Result result = Tester.test(solver, nodes, 10);
 			System.out.println(solver + ": " + result);
 		}
 		

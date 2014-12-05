@@ -31,14 +31,15 @@ public class LinKernighanSimAnneal implements TSPSolver{
 	
 	private float temperature;
 	private float tempMultiplier;
-	private final float minTemp = 0.0000005f;
+	private final float minTemp;
 	
 	private String str;
 	
-	public LinKernighanSimAnneal(int limit, float temperature, float tempMultiplier) {
+	public LinKernighanSimAnneal(int limit, float temperature, float tempMultiplier, float minTemp) {
 		this.LIMIT = limit;
 		this.temperature = temperature;
 		this.tempMultiplier = tempMultiplier;
+		this.minTemp = minTemp;
 		str = "LK-SA(" + limit + ", " + temperature + ", " + tempMultiplier + ")";
 	}
 	
@@ -117,7 +118,7 @@ public class LinKernighanSimAnneal implements TSPSolver{
 //					visualizer.sleep();
 					t1Index = (short) random.nextInt(path.length);
 					i = -1;
-					System.out.print(".");
+//					System.out.print(".");
 				}
 				t1Index = mod(t1Index + 1);
 				i++;
@@ -125,9 +126,9 @@ public class LinKernighanSimAnneal implements TSPSolver{
 			if(numChanges < 4){
 				break;
 			}
-			System.out.println();
+//			System.out.println();
 			temperature *= tempMultiplier;
-			System.out.println(temperature);
+//			System.out.println(temperature);
 		}
 		
 		println("final path: " + Arrays.toString(path));
